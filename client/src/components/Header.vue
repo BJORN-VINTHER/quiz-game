@@ -1,44 +1,35 @@
+<script setup>
+import MaerskIcon from "./../assets/icons/IconMaersk.vue";
+
+defineProps({
+  title: {
+    type: String,
+    required: true,
+  },
+  ip: {
+    type: String,
+    required: true
+  }
+});
+</script>
+
 <template>
-  <div
-    id="header"
-    class="d-flex flex-row justify-content-center align-items-center"
-  >
-    <svg id="logo">
-      <g fill-rule="nonzero">
-        <path
-          d="M4.28463565,0 L31.3468062,0 C33.7169495,0 35.6383302,1.91076181 35.6383302,4.26780595 L35.6383302,33.132194 C35.6383302,35.4892382 33.7169495,37.4 31.3468062,37.4 L4.28463565,37.4 C1.91830905,37.4 0,35.4923151 0,33.1390665 L0,4.27467843 C-0.00365105909,3.142229 0.446140088,2.05490945 1.25005944,1.25285417 C2.0539788,0.450798892 3.14588678,0 4.28463565,0 Z"
-          fill="#42B0D5"
-        ></path>
-        <polygon
-          fill="#FFFFFF"
-          points="23.4962889 17.6509756 30.5313476 8.91442683 30.5106156 8.88706098 20.3450249 13.7308171 17.8364529 2.84604878 17.7949889 2.84604878 15.2864169 13.7308171 5.12082631 8.88706098 5.10009431 8.91442683 12.135153 17.6509756 1.96956232 22.4947317 1.98338365 22.528939 13.2615916 22.528939 10.7530196 33.4205488 10.7806623 33.4342317 17.8157209 24.6976829 24.8507796 33.4342317 24.8853329 33.4137073 22.3698503 22.528939 33.6549689 22.528939 33.6618796 22.4947317"
-        ></polygon>
-      </g>
-    </svg>
+  <div id="header" class="d-flex flex-row justify-content-center align-items-center">
+    <MaerskIcon />
     <div id="title" class="ml-4">
       {{ title }}
+      {{ ip }}
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: "Header",
-  props: {
-    title: String,
-  },
-};
-</script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #header {
   padding: 30px 20px;
   margin-bottom: 50px;
-  background-color:  white;
-}
-#title {
   font-size: 24pt;
+  background-color: white;
+  color: #222;
 }
 #logo {
   transform: scale(1.4);

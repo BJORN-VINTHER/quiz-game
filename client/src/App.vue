@@ -1,42 +1,49 @@
+<script>
+import { RouterLink, RouterView } from "vue-router";
+import Header from "@/components/Header.vue";
+import { getIp } from "@/utilities/utilities.js";
+
+export default {
+  components: {
+    Header
+  },
+  data() {
+    return {
+      ip: "hejsa"
+    }
+  },
+  async mounted() {
+    this.ip = await getIp()
+  }
+}
+</script>
+
 <template>
-  <div id="app">
-    <Header title="Maersk Employee Quiz" />
-    <HelloWorld msg="Welcome to Your Vue.js App Bjørn Vinther" />
-    <CreateGame/>
+  <Header title="Maersk Employee Quiz" :ip="ip" />
+  <div id="app-container">
+    <RouterView />
   </div>
 </template>
 
-<script>
-import HelloWorld from "./pages/HelloWorld.vue";
-import CreateGame from "./pages/CreateGame.vue";
-import Header from "./components/Header.vue";
 
-export default {
-  name: "App",
-  components: {
-    HelloWorld,
-    CreateGame,
-    Header,
-  },
-};
-</script>
 
 <style>
-@font-face {
-  font-family: "Komikax";
-  src: local("Komikax"), url(./assets/KOMIKAX.ttf) format("truetype");
-}
+@import "@/assets/base.css";
+
 @font-face {
   font-family: "Comic";
   src: local("Comic"), url(./assets/Comic.otf) format("opentype");
 }
 
-#app {
+#app-container {
+  margin: 50px;
+  font-weight: normal;
   font-family: "Comic";
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  /* text-align: center; */
+}
+
+body {
+  font-family: "Comic";
   color: white;
-  /* margin-top: 60px; */
+  background-color: #00243d;
 }
 </style>
