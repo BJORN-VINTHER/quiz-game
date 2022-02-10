@@ -5,6 +5,8 @@ export class player {
     socket;
     userName;
     answerSubmitted = new Subject();
+    startNextRoundRequested = new Subject();
+    showFinalResultsRequested = new Subject();
 
     constructor(socket, userName) {
         this.socket = socket;
@@ -13,5 +15,13 @@ export class player {
         socket.on("submitAnswer", answer => {
             this.answerSubmitted.next(answer);
         });
+
+        socket.on("startNextRound", () => {
+            this.startNextRoundRequested.next();
+        });
+
+        socket.on("showFinalResuts", () => {
+            this.showFinalResultsRequested.next();
+        })
     }
 }

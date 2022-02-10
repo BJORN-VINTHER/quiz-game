@@ -7,16 +7,16 @@ const { makeID } = require("./utilities");
 
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, { /* options */ });
+export const io = new Server(httpServer, { /* options */ });
 
-const activeGames = [];
+const activeGames = []; // List of game
 
 io.on("connection", (socket) => {
     const { inviteCode, userName, asHost } = socket.handshake.query;
     const game = activeGames.find(g => g.inviteCode === inviteCode);
     if (asHost && game.hostIP !== socket.remoteAddress)
         throw new Error('Tried connecting as host, but the IP did not match');
-    game.addPlayer(new player(socket, userName));
+    game.addPlayer(new player(socket, userName), asHost);
 });
 
 httpServer.listen(3000);
