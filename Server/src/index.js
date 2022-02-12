@@ -4,14 +4,23 @@ const { Server } = require("socket.io");
 const { game } = require("./game");
 const { player } = require("./player");
 const { makeID } = require("./utilities");
+const { db } = require("./db");
+const { environment } = require("./environment");
 
 const app = express();
 const httpServer = createServer(app);
 export const io = new Server(httpServer, { /* options */ });
+export const db = new db();
+export const environment = new environment();
 
 const activeGames = []; // List of game
 
 io.on("connection", (socket) => {
+    socket.send('ConnectionEstablished');
+    socket.on('SocketAPITest', (testMessage) => {
+        socket.send('TestMessageReceived', testMessage);
+    })
+    return;
     const { inviteCode, userName, asHost } = socket.handshake.query;
     const game = activeGames.find(g => g.inviteCode === inviteCode);
     if (asHost && game.hostIP !== socket.remoteAddress)
@@ -43,3 +52,11 @@ app.post('/hostNewGame', (req, res) => {
 // Start next round
 
 // 
+
+app.get('ProofOfConceptGetTest', (req, res) => {
+    res.status(200).send('All good');
+});
+
+app.post('ProofOfConceptPostTest', (req, res) => {
+    res.status(200).send('Received ' + req.body);
+})
