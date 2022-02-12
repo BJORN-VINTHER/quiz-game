@@ -19,7 +19,7 @@ export default {
 </script>
 
 <template>
-  <Header title="Maersk Employee Quiz" :ip="ip" />
+  <Header title="Maersk Confessions" :ip="ip" />
   <div id="app-container">
     <RouterView />
   </div>
@@ -35,14 +35,19 @@ export default {
   src: local("Comic"), url(./assets/Comic.otf) format("opentype");
 }
 
+@font-face {
+  font-family: "Marsek";
+  src: local("Marsek"), url(./assets/Marsek.ttf) format("truetype");
+}
+
 #app-container {
   margin: 50px;
   font-weight: normal;
-  font-family: "Comic";
 }
 
 body {
   font-family: "Comic";
+  font-size: 18pt;
   color: white;
   background-color: #00243d;
 }

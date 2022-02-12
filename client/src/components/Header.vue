@@ -18,7 +18,7 @@ defineProps({
     <MaerskIcon />
     <div id="title" class="ml-4">
       {{ title }}
-      {{ ip }}
+      <span id="ip-text">({{ ip }})</span>
     </div>
   </div>
 </template>
@@ -35,5 +35,10 @@ defineProps({
   transform: scale(1.4);
   width: 40px;
   height: 40px;
+}
+#ip-text {
+  font-family: "Calibri", 'Times New Roman', Times, serif;
+  color: #9aacb9;
+  font-size: 1rem;
 }
 </style>

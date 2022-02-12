@@ -4,8 +4,7 @@ import { serviceMock } from "../utilities/serviceMock.js";
 export default {
   methods: {
     async onCreateGame() {
-      const gameId = await serviceMock.createGame();
-      this.$router.push({ path: `/games/${gameId}/lobby` });
+      const result1 = serviceMock.createGame();
     },
   },
 };
@@ -13,7 +12,7 @@ export default {
 
 <template>
   <div class="d-flex flex-column align-items-center">
-    <button @click="onCreateGame">Host new game</button>
+    <h1>this is the game overview</h1>
   </div>
 </template>
 
