@@ -26,7 +26,6 @@ defineProps({
 <style scoped>
 #header {
   padding: 30px 20px;
-  margin-bottom: 50px;
   font-size: 24pt;
   background-color: white;
   color: #222;

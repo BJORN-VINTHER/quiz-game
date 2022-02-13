@@ -41,7 +41,9 @@ export default {
 }
 
 #app-container {
-  margin: 50px;
+  margin: 20px auto;
+  max-width: 1200px;
+  background: red;
   font-weight: normal;
 }
 

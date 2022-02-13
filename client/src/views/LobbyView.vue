@@ -9,11 +9,11 @@ export default {
   },
   methods: {
     async startGame() {
-
+      this.lobbyState = await serviceMock.startGame();
+      this.$router.push({ path: `/games/${this.$route.params.gameId}/overview` });
     },
   },
   async mounted() {
-    console.log("called");
     this.lobbyState = await serviceMock.getLobby(this.$route.params.gameId);
   },
 };
@@ -24,7 +24,9 @@ export default {
     <h1>Lobby</h1>
 
     <template v-if="lobbyState">
-      <h4 style="margin-top: 50px">{{ lobbyState.players.length }} players joined</h4>
+      <h4 style="margin-top: 50px">
+        {{ lobbyState.players.length }} players joined
+      </h4>
       <div
         class="d-flex flex-row flex-wrap justify-content-center player-container"
       >
@@ -35,6 +37,8 @@ export default {
           >{{ player.playerName }}</span
         >
       </div>
+
+      <button class="mt-5" @click="startGame">Start game</button>
     </template>
   </div>
 </template>
