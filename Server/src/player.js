@@ -1,6 +1,6 @@
 const { Subject } = require('rxjs');
 
-export class player {
+class Player {
     playerID;
     socket;
     userName;
@@ -25,3 +25,5 @@ export class player {
         })
     }
 }
+
+module.exports = Player;
