@@ -8,16 +8,18 @@ const Game = require("./game");
 
 const app = express();
 const httpServer = createServer(app);
+app.use(express.json());
+httpServer.listen(4000);
 
 // Global variables
-const io = new Server(httpServer, { /* options */ });
+const io = new Server(httpServer, { cors: { origin: '*'} });
 const db = new Db();
 module.exports = { io, db };
 
 const activeGames = []; // List of game
 
-io.on("connection", (socket) => {
-    console.log('Server connected');
+io.on("connection", async (socket) => {
+    console.log('Server connected with socket ', socket);
     socket.on('socketAPITest', (testMessage) => {
         console.log('Server: Received socketAPITest. Sending TestMessageReceived');
         socket.emit('testMessageReceived', testMessage);
@@ -40,10 +42,6 @@ io.on("connection", (socket) => {
     else
         console.log('No game found with invite code ', inviteCode);
 });
-
-httpServer.listen(3000);
-
-app.use(express.json());
 
 app.get('/test', (req, res) => {
     console.log('Body', req.body);
