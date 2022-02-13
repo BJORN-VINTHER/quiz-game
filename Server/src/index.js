@@ -25,9 +25,18 @@ io.on("connection", (socket) => {
     const { inviteCode, userName, asHost } = socket.handshake.query;
     const game = activeGames.find(g => g.inviteCode === inviteCode);
     if (asHost && game.hostIP !== socket.remoteAddress)
-        throw new Error('Tried connecting as host, but the IP did not match');
-    if (game)
-        game.addPlayer(new Player(socket, userName), asHost);
+        throw new Error('Tried connecting as host, but the IP did not match. Got: ' + socket.remoteAddress);
+    if (!!game) {
+        let player = await db.getPlayerByIP(socket.remoteAddress, game.GameID);
+        if (!player) {
+            const playerID = db.addPlayer(game.gameID, userName, socket.remoteAddress);
+            player = new Player(socket, userName);
+            player.playerID = playerID;
+        }
+        else
+            player.socket = socket;
+        game.addPlayer(player, asHost);
+    }
     else
         console.log('No game found with invite code ', inviteCode);
 });
@@ -42,9 +51,12 @@ app.get('/test', (req, res) => {
     res.status(200).send('All good! ' + myString);
 });
 
-app.post('/hostNewGame', (req, res) => {
+app.post('/hostNewGame', async (req, res) => {
     const inviteCode = makeID(6);
-    const newGame = new Game(req.socket.remoteAddress, inviteCode);
+    const ip = getIPFromHttp(req);
+    const newGame = new Game(ip, inviteCode);
+    const gameID = await db.addGame(newGame.gameGuid, inviteCode, ip);
+    newGame.gameID = gameID;
     this.activeGames.push(newGame);
     res.status(200).send({inviteCode: inviteCode});
 });
@@ -52,8 +64,6 @@ app.post('/hostNewGame', (req, res) => {
 // Join game
 
 // Rejoin game
-
-// Start next round
 
 // 
 

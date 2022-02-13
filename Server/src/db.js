@@ -1,5 +1,6 @@
 const Game = require('./game');
 const Environment = require('./environment');
+const Player = require('./player');
 const Connection = require('tedious').Connection;
 var Request = require('tedious').Request;
 var TYPES = require('tedious').TYPES;
@@ -103,6 +104,27 @@ class Db {
             request.on("requestCompleted", function (rowCount, more) {
                 connection.close();
                 resolve(playerID);
+            });
+        });
+    }
+
+    async getPlayerByIP(ip, gameID) {
+        return new Promise((resolve, reject) => {
+            const request = new Request("SELECT top(1) ID, UserName, FROM Player WHERE IP = " + ip + " AND GameID = " + gameID, function(err) {  
+                if (err) {  
+                    console.log(err);
+                    reject(err);
+                }
+            });
+            const player = new Player(null, null);
+            request.on('row', function(columns) {
+                player.playerID = columns[0];
+                player.userName = columns[1];
+            });
+            const connection = this.establishConnection(request);
+            request.on("requestCompleted", function (rowCount, more) {
+                connection.close();
+                resolve(player);
             });
         });
     }

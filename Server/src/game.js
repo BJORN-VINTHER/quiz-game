@@ -19,13 +19,20 @@ class Game {
     }
 
     addPlayer(player, asHost) {
-        this.players.push(player);
+        if (this.players.some(p => p.playerID === player.playerID))
+            this.onPlayerRejoined();
+        else
+            this.players.push(player);
         player.socket.join(this.gameGuid); // Join the game socketIO room to enable broadcasting
         player.answerSubmitted.subscribe((answer) => this.onAnswerSubmitted(answer, player));
         if (asHost) {
             player.startNextRoundRequested.subscribe(() => this.onStartNextRoundRequested());
             player.showFinalResultsRequested.subscribe(() => this.showFinalResultsRequested());
         }
+    }
+
+    onPlayerRejoined() {
+        io.to(this.gameID).emit('gameStateUpdated', this.gameState.getUiGameState());
     }
 
     onAnswerSubmitted(answer, player) {
