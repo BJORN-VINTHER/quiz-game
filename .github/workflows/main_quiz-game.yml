@@ -9,10 +9,6 @@ on:
       - main
   workflow_dispatch:
 
-defaults:
-  run:
-    working-directory: Server
-
 jobs:
   build:
     runs-on: windows-latest
@@ -26,11 +22,13 @@ jobs:
           node-version: '16.x'
 
       - name: npm install, build, and test
+        working-directory: Server
         run: |
           npm install
           npm run build --if-present
           
       - name: Zip artifact for deployment
+        working-directory: Server
         run: Compress-Archive . release.zip
       
       - name: Upload artifact for deployment job
