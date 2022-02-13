@@ -12,14 +12,16 @@ const httpServer = createServer(app);
 // Global variables
 const io = new Server(httpServer, { /* options */ });
 const db = new Db();
-module.exports = { io, db};
+module.exports = { io, db };
 
 const activeGames = []; // List of game
 
 io.on("connection", (socket) => {
-    socket.send('ConnectionEstablished');
+    console.log('Server connected');
+    socket.emit('ConnectionEstablished', 'testtt');
     socket.on('SocketAPITest', (testMessage) => {
-        socket.send('TestMessageReceived', testMessage);
+        console.log('Server: Received SocketAPITest. Sending TestMessageReceived');
+        socket.emit('TestMessageReceived', testMessage);
     })
     return;
     const { inviteCode, userName, asHost } = socket.handshake.query;
@@ -75,4 +77,25 @@ app.post('/AddGameTest', async (req, res) => {
 
 app.post('/AddPlayerTest', async (req, res) => {
     const { userName, } = req.body;
+});
+
+app.get('/SocketIOTest', (req, res) => {
+    console.log('Testing initiated');
+    const ioClient = require('socket.io-client');
+    console.log('Connecting');
+    const socket = ioClient.connect('http://localhost:3000');
+    socket.on('connect', () => {
+        console.log('Client connected');
+    });
+    socket.on('ConnectionEstablished', () => {
+        console.log('Client: Received ConnectionEstablished. Sending socketAPITest');
+        socket.emit("SocketAPITest", 'Testing testing');
+    })
+    socket.on('TestMessageReceived', (message) => {
+        console.log("Client: TestMessageReceived: ", message);
+        res.sendStatus(200);
+    });
+    socket.onAny((message1) => {
+        console.log('Client: Received this ', message1);
+    });
 });

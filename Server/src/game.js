@@ -76,7 +76,7 @@ class Game {
     endGame() {
         this.gameState.stateEnum = 4;
         const host = this.players.find(p => p.socket.remoteAddress === this.hostIP);
-        host.socket.send('gameEnded');
+        host.socket.emit('gameEnded');
     }
 
     showFinalResultsRequested() {

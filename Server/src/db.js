@@ -39,14 +39,6 @@ class Db {
     async addGame(guid, invitationCode, hostIP) {
         return new Promise((resolve, reject) => {
             let gameID;
-
-            /*const connection = new Connection(this.config);
-            connection.on('connect', function(err) {  
-                if (err)
-                    console.log('Connection error ', err);
-                connection.execSql(request);
-            });
-            connection.connect();*/
             const request = new Request("INSERT Game (GameGUID, InvitationCode, HostPlayerIP, CreationTime) OUTPUT INSERTED.ID VALUES (@GameGUID, @InvitationCode, @HostIP, CURRENT_TIMESTAMP);", function(err) { 
                 if (err) {  
                     console.log(err);
@@ -95,8 +87,7 @@ class Db {
         return new Promise<string>((resolve) => {
             let playerID;
 
-            const connection = new Connection(this.config);
-            const request = new Request("INSERT quiz-game.Player (GameID, UserName, IP) OUTPUT INSERTED.ID VALUES (@GameID, @UserName, @IP);", function(err) { 
+            const request = new Request("INSERT Player (GameID, UserName, IP) OUTPUT INSERTED.ID VALUES (@GameID, @UserName, @IP);", function(err) { 
                 if (err) {  
                     console.log(err);
                 }  
@@ -108,14 +99,15 @@ class Db {
                 playerID = columns[0].value;
             });
     
+            const connection = this.establishConnection(request);
             request.on("requestCompleted", function (rowCount, more) {
                 connection.close();
                 resolve(playerID);
             });
-            connection.execSql(request);
         });
     }
 
+    // Template boilerplate
     executeStatement() {
         const connection = new Connection(this.config);
         connection.on('connect', function(err) {  
