@@ -9,7 +9,7 @@ const Game = require("./game");
 const app = express();
 const httpServer = createServer(app);
 app.use(express.json());
-httpServer.listen(4000);
+httpServer.listen(app.listen(process.env.PORT || 4000));
 
 // Global variables
 const io = new Server(httpServer, { cors: { origin: '*'} });
