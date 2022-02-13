@@ -4,3 +4,8 @@ Content-Type: application/json
 {
     "myString": "Test succeeded!"
 }
+
+###
+
+POST http://localhost:3000/AddGameTest
+Content-Type: application/json

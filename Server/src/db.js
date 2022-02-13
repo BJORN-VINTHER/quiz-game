@@ -1,9 +1,10 @@
-import { environment } from '.';
+const Game = require('./game');
+const Environment = require('./environment');
 const Connection = require('tedious').Connection;
 var Request = require('tedious').Request;
 var TYPES = require('tedious').TYPES;
 
-export class db {
+class Db {
     config;
 
     constructor() {
@@ -12,8 +13,8 @@ export class db {
             authentication: {
                 type: 'default',
                 options: {
-                    userName: environment.dbUserName,
-                    password: environment.dbPassword
+                    userName: Environment.dbUserName,
+                    password: Environment.dbPassword
                 }
             },
             options: {
@@ -24,14 +25,32 @@ export class db {
         };  
     }
 
+    establishConnection(request) {
+        const connection = new Connection(this.config);
+        connection.on('connect', function(err) {  
+            if (err)
+                console.log('Connection error ', err);
+            connection.execSql(request);
+        });
+        connection.connect();
+        return connection;
+    }
+
     async addGame(guid, invitationCode, hostIP) {
-        return new Promise<string>((resolve) => {
+        return new Promise((resolve, reject) => {
             let gameID;
 
-            const connection = new Connection(config);
-            const request = new Request("INSERT quiz-game.Game (GameGUID, InvitationCode, HostPlayerIP, CreationTime) OUTPUT INSERTED.ID VALUES (@GameGUID, @InvitationCode, @HostIP, CURRENT_TIMESTAMP);", function(err) { 
+            /*const connection = new Connection(this.config);
+            connection.on('connect', function(err) {  
+                if (err)
+                    console.log('Connection error ', err);
+                connection.execSql(request);
+            });
+            connection.connect();*/
+            const request = new Request("INSERT Game (GameGUID, InvitationCode, HostPlayerIP, CreationTime) OUTPUT INSERTED.ID VALUES (@GameGUID, @InvitationCode, @HostIP, CURRENT_TIMESTAMP);", function(err) { 
                 if (err) {  
                     console.log(err);
+                    reject(err);
                 }  
             });
             request.addParameter('GameGUID', TYPES.NVarChar, guid);
@@ -41,19 +60,42 @@ export class db {
                 gameID = columns[0].value;
             });
     
+            const connection = this.establishConnection(request);
             request.on("requestCompleted", function (rowCount, more) {
                 connection.close();
                 resolve(gameID);
             });
-            connection.execSql(request);
         });
     }
 
-    addPlayer(gameID, userName, IP) {
+    async getGame(gameID) {
+        return new Promise((resolve, reject) => {
+            const request = new Request("SELECT top(1) ID, InvitationCode, HostPlayerIP, CreationTime FROM Game WHERE ID = " + gameID, function(err) {  
+                if (err) {  
+                    console.log(err);
+                    reject(err);
+                }
+            });
+            const game = new Game(null, null);
+            request.on('row', function(columns) {
+                game.gameID = columns[0].value;
+                game.inviteCode = columns[1].value;
+                game.hostIP = columns[2].value;
+                game.creationTime = columns[3].value;
+            });
+            const connection = this.establishConnection(request);
+            request.on("requestCompleted", function (rowCount, more) {
+                connection.close();
+                resolve(game);
+            });
+        });
+    }
+
+    async addPlayer(gameID, userName, IP) {
         return new Promise<string>((resolve) => {
             let playerID;
 
-            const connection = new Connection(config);
+            const connection = new Connection(this.config);
             const request = new Request("INSERT quiz-game.Player (GameID, UserName, IP) OUTPUT INSERTED.ID VALUES (@GameID, @UserName, @IP);", function(err) { 
                 if (err) {  
                     console.log(err);
@@ -75,7 +117,7 @@ export class db {
     }
 
     executeStatement() {
-        const connection = new Connection(config);
+        const connection = new Connection(this.config);
         connection.on('connect', function(err) {  
             // If no error, then good to proceed.
             console.log("Connected");
@@ -111,7 +153,7 @@ export class db {
     }
 
     executeStatement1() {  
-        const connection = new Connection(config);
+        const connection = new Connection(this.config);
         connection.on('connect', function(err) {  
             // If no error, then good to proceed.
             console.log("Connected");
@@ -141,3 +183,5 @@ export class db {
         connection.execSql(request);
     }
 }
+
+module.exports = Db;

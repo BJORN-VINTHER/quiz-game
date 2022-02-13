@@ -1,4 +1,4 @@
-export class gameState {
+class GameState {
     stateEnum; // 1: Waiting to start. 2: Awaiting answers. 3: Awaiting new round. 4: Game finished.
     currentRound; // number
     maxRounds; // number
@@ -36,15 +36,21 @@ export class gameState {
     }
 }
 
-export class playerAnswer {
+class PlayerAnswer {
     playerID;
     playerName;
     answerIndex;
     answerText;
 }
 
-export class playerScore {
+class PlayerScore {
     playerID;
     playerName;
     score;
+}
+
+module.exports = {
+    GameState,
+    PlayerAnswer,
+    PlayerScore
 }

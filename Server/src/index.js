@@ -1,17 +1,18 @@
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
-const { game } = require("./game");
-const { player } = require("./player");
-const { makeID } = require("./utilities");
-const { db } = require("./db");
-const { environment } = require("./environment");
+const Player = require("./player");
+const { makeID, getIPFromHttp } = require("./utilities");
+const Db = require("./db");
+const Game = require("./game");
 
 const app = express();
 const httpServer = createServer(app);
-export const io = new Server(httpServer, { /* options */ });
-export const db = new db();
-export const environment = new environment();
+
+// Global variables
+const io = new Server(httpServer, { /* options */ });
+const db = new Db();
+module.exports = { io, db};
 
 const activeGames = []; // List of game
 
@@ -25,7 +26,7 @@ io.on("connection", (socket) => {
     const game = activeGames.find(g => g.inviteCode === inviteCode);
     if (asHost && game.hostIP !== socket.remoteAddress)
         throw new Error('Tried connecting as host, but the IP did not match');
-    game.addPlayer(new player(socket, userName), asHost);
+    game.addPlayer(new Player(socket, userName), asHost);
 });
 
 httpServer.listen(3000);
@@ -40,7 +41,7 @@ app.get('/test', (req, res) => {
 
 app.post('/hostNewGame', (req, res) => {
     const inviteCode = makeID(6);
-    const newGame = new game(req.socket.remoteAddress, inviteCode);
+    const newGame = new Game(req.socket.remoteAddress, inviteCode);
     this.activeGames.push(newGame);
     res.status(200).send({inviteCode: inviteCode});
 });
@@ -53,10 +54,25 @@ app.post('/hostNewGame', (req, res) => {
 
 // 
 
-app.get('ProofOfConceptGetTest', (req, res) => {
+app.get('/ProofOfConceptGetTest', (req, res) => {
     res.status(200).send('All good');
 });
 
-app.post('ProofOfConceptPostTest', (req, res) => {
+app.post('/ProofOfConceptPostTest', (req, res) => {
     res.status(200).send('Received ' + req.body);
-})
+});
+
+app.post('/AddGameTest', async (req, res) => {
+    console.log('Connected');
+    const { v4: uuidv4 } = require('uuid');
+    console.log('Adding game');
+    const gameID = await db.addGame(uuidv4(), makeID(6), getIPFromHttp(req));
+    console.log('Added game with ID ', gameID);
+    const game = await db.getGame(gameID);
+    console.log('Found Game ', game);
+    res.status(200).send({GameID: gameID});
+});
+
+app.post('/AddPlayerTest', async (req, res) => {
+    const { userName, } = req.body;
+});
