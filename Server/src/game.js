@@ -45,7 +45,7 @@ class Game {
     }
 
     endTurn() {
-        io.to(this.gameID).emit('roundResultReady', this.gameState.getRoundResult()); // Emit round result
+        io.to(this.gameID).emit('turnResultReady', this.gameState.getTurnResult()); // Emit round result
         setTimeout(() => io.to(this.gameID).emit('gameStateUpdated', this.gameState.getUiGameState()), 3000); // Emit updated score and round state
 
         this.currentRoundPreviouslyPlayedPlayerIDs.push(this.gameState.currentTurnPlayerID);

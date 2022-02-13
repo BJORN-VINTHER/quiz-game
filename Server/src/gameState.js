@@ -26,7 +26,7 @@ class GameState {
         };
     }
 
-    getRoundResult() {
+    getTurnResult() {
         return {
             questionText: this.questionText,
             currentTurnPlayerID: this.currentTurnPlayerID,
