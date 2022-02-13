@@ -31,13 +31,13 @@ jobs:
           npm run build --if-present
           
       - name: Zip artifact for deployment
-        run: Compress-Archive -Path . -DestinationPath release.zip -CompressionLevel Fastest
+        run: Compress-Archive -Path . -DestinationPath ./release.zip -CompressionLevel Fastest
       
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: node-app
-          path: release.zip
+          path: ./release.zip
 
   deploy:
     runs-on: ubuntu-latest
