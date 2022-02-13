@@ -1,15 +1,18 @@
 import { getIp, httpGet, httpPost } from "./utilities";
+import IoClient from "socket.io-client";
 
 export const service = new Service();
 
 class Service {
-
-
     constructor() {
     }
 
     async init() {
         this.ip = getIp()
+    }
+
+    connect() {
+        IoClient.connect("...");
     }
 
     async createGame() {
