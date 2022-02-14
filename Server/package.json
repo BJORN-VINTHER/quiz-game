@@ -1,17 +1,14 @@
 {
   "name": "QuizGameServer",
   "version": "1.0.0",
-  "description": "",
   "main": "src/index.js",
-  "type": "commonjs",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ."
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "express": "^4.17.2",
+    "pug": "^3.0.2",
     "rxjs": "^7.5.4",
     "socket.io": "^4.4.1",
     "socket.io-client": "^4.4.1",

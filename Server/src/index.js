@@ -5,11 +5,30 @@ const Player = require("./player");
 const { makeID, getIPFromHttp } = require("./utilities");
 const Db = require("./db");
 const Game = require("./game");
-
+var path = require('path');
 const app = express();
-const httpServer = createServer(app);
 app.use(express.json());
-httpServer.listen(app.listen(process.env.PORT || 4000));
+
+// view engine setup and add default page (mostly used for debugging deploy issues)
+var indexRouter = require('../routes/index');
+app.set('views', path.join(__dirname, '../views'));
+app.set('view engine', 'pug');
+app.use('/', indexRouter);
+
+
+
+
+app.get('/test', (req, res) => {
+    res.send('HTTP response with Hello!');
+});
+
+// Listen to the App Engine-specified port, or 8080 otherwise
+const httpServer = createServer(app);
+const PORT = process.env.PORT || 4000;
+app.set('port', PORT);
+httpServer.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}...`);
+});
 
 // Global variables
 const io = new Server(httpServer, { cors: { origin: '*'} });
@@ -56,14 +75,14 @@ app.post('/hostNewGame', async (req, res) => {
     const gameID = await db.addGame(newGame.gameGuid, inviteCode, ip);
     newGame.gameID = gameID;
     this.activeGames.push(newGame);
-    res.status(200).send({inviteCode: inviteCode});
+    res.status(200).send({ inviteCode: inviteCode });
 });
 
 // Join game
 
 // Rejoin game
 
-// 
+
 
 app.get('/proofOfConceptGetTest', (req, res) => {
     res.status(200).send('All good');
@@ -81,7 +100,7 @@ app.post('/addGameTest', async (req, res) => {
     console.log('Added game with ID ', gameID);
     const game = await db.getGame(gameID);
     console.log('Found Game ', game);
-    res.status(200).send({GameID: gameID});
+    res.status(200).send({ GameID: gameID });
 });
 
 app.post('/addPlayerTest', async (req, res) => {

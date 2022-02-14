@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/bdcf9378-dda0-437f-bece-9b8332c5b543/resourceGroups/azure-sb1/providers/Microsoft.Web/sites/bhv-az-node-test",
+    "appService.deploySubpath": "Server"
+}
