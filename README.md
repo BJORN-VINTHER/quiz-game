@@ -57,6 +57,10 @@ currentTurnPlayerName: string,
 choices: string[]
 } (emitted to everyone)
 
+'roundAnswerChoicesReady' return {
+choices: string[]
+} (emitted to everyone)
+
 'gameStateUpdated' returns {
 currentRound: number,
 maxRound: number,

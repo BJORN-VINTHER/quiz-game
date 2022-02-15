@@ -27,6 +27,10 @@ class Db {
         };  
     }
 
+    static createNew() {
+        return new Db();
+    }
+
     establishConnection(request) {
         const connection = new Connection(this.config);
         connection.on('connect', function(err) {  
@@ -63,6 +67,7 @@ class Db {
     }
 
     async getGame(gameID) {
+        console.log('Getting game ', gameID);
         return new Promise((resolve, reject) => {
             const request = new Request("SELECT top(1) ID, InvitationCode, HostPlayerIP, CreationTime FROM Game WHERE ID = " + gameID, function(err) {  
                 if (err) {  
@@ -86,6 +91,7 @@ class Db {
     }
 
     async getQuestions() {
+        console.log('Getting questions');
         return new Promise((resolve, reject) => {
             const request = new Request("SELECT OrderIndex, Question, Option1, Option2, Option3, Option4 FROM Question ORDER BY OrderIndex", function(err) {  
                 if (err) {  
@@ -96,12 +102,12 @@ class Db {
             const questions = [];
             request.on('row', function(columns) {
                 const question = new Question();
-                question.Order = columns[0].value;
-                question.Text = columns[1].value;
-                question.Option1 = columns[2].value;
-                question.Option2 = columns[3].value;
-                question.Option3 = columns[4].value;
-                question.Option4 = columns[5].value;
+                question.order = columns[0].value;
+                question.text = columns[1].value;
+                question.option1 = columns[2].value;
+                question.option2 = columns[3].value;
+                question.option3 = columns[4].value;
+                question.option4 = columns[5].value;
                 questions.push(question);
             });
             const connection = this.establishConnection(request);
@@ -113,7 +119,7 @@ class Db {
     }
 
     async addPlayer(gameID, userName, IP) {
-        return new Promise<string>((resolve) => {
+        return new Promise((resolve) => {
             let playerID;
 
             const request = new Request("INSERT Player (GameID, UserName, IP) OUTPUT INSERTED.ID VALUES (@GameID, @UserName, @IP);", function(err) { 
@@ -136,15 +142,16 @@ class Db {
         });
     }
 
-    async getPlayerByIP(ip, gameID) {
+    async getPlayerByIP(socket, ip, gameID) {
+        console.log('Getting player ', gameID, ip);
         return new Promise((resolve, reject) => {
-            const request = new Request("SELECT top(1) ID, UserName, FROM Player WHERE IP = " + ip + " AND GameID = " + gameID, function(err) {  
+            const request = new Request("SELECT top(1) ID, UserName FROM Player WHERE IP = '" + ip + "' AND GameID = " + gameID, function(err) {  
                 if (err) {  
                     console.log(err);
                     reject(err);
                 }
             });
-            const player = new Player(null, null);
+            const player = new Player(socket, null);
             request.on('row', function(columns) {
                 player.playerID = columns[0];
                 player.userName = columns[1];
