@@ -5,7 +5,8 @@ const Player = require("./player");
 const { makeID, getIPFromHttp } = require("./utilities");
 const Db = require("./db");
 const Game = require("./game");
-var path = require('path');
+const cors = require('cors')
+const path = require('path');
 const app = express();
 app.use(express.json());
 
@@ -14,7 +15,7 @@ var indexRouter = require('../routes/index');
 app.set('views', path.join(__dirname, '../views'));
 app.set('view engine', 'pug');
 app.use('/', indexRouter);
-
+app.use(cors());
 
 
 
@@ -111,7 +112,7 @@ app.get('/socketIOTest', (req, res) => {
     console.log('Testing initiated');
     const ioClient = require('socket.io-client');
     console.log('Connecting');
-    const socket = ioClient.connect('http://localhost:3000');
+    const socket = ioClient.connect('http://localhost:4000');
     socket.on('connect', () => {
         socket.emit("socketAPITest", 'Testing testing');
     });

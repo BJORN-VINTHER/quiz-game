@@ -1,50 +1,47 @@
 import { getIp, httpGet, httpPost } from "./utilities";
-import IoClient from "socket.io-client";
+import io from "socket.io-client";
 
 class Service {
+
     constructor() {
+        this.init();
     }
 
     async init() {
         console.log('Initializing service');
-        this.ip = getIp();
-        
+        //this.baseUrl = "https://quiz-game.azurewebsites.net";
+        this.baseUrl = "http://localhost:4000"
+        this.ip = await getIp();
     }
 
-    connect() {
-        console.log('Connecting to Socket');
-        const socket = IoClient.connect("https://quiz-game-api.azurewebsites.net");
-        socket.on('connect', () => {
-            console.log('SocketIO connection established');
-            socket.emit('socketAPITest')
-        })
-        return socket;
-    }
-
-    async serverTest() {
-        const result = await httpGet("http://localhost:4000/proofOfConceptGetTest"); // https://quiz-game-api.azurewebsites.net/proofOfConceptGetTest
-        console.log('Server result ', result);
+    //#region http endpoints
+    async httpTest() {
+        console.log('calling service');
+        const result = await httpGet(this.baseUrl + "/test");
+        console.log("service reponded with: " + result);
         return result;
     }
 
     async createGame() {
-        console.log("Called create game - " + this.ip);
-        return 4892;
+        const gameId = await httpPost(this.baseUrl + "/hostNewGame");
+        console.log("Created game: " + gameId);
+        return gameId;
     }
+    //#endregion
 
-    async sampleGet() {
-        return httpGet("https://jsonplaceholder.typicode.com/todos/1");
+    //#region socket
+    connect() {
+        console.log('Connecting to socket...');
+        const socket = io.connect(this.baseUrl);
+        socket.on('connect', () => {
+            console.log('Connection established');
+        })
+        socket.on("connect_error", (err) => {
+            console.log(`failed to connect due to ${err.message} \n ${err.stack}`);
+        });
+        return socket;
     }
-
-    async samplePost() {
-        const item = {
-            title: "foo",
-            body: "bar",
-            userId: 1,
-        };
-        return httpPost("https://jsonplaceholder.typicode.com/posts", item);
-    }
-
+    //#endregion
 }
 
 export const service = new Service();

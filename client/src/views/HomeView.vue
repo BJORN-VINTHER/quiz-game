@@ -8,9 +8,11 @@ export default {
       const gameId = await serviceMock.createGame();
       this.$router.push({ path: `/games/${gameId}/lobby` });
     },
-    async onTestClick() {
-      console.log('Calling service');
-      service.serverTest(); // const socket = service.connect();
+    async onTestHttpClick() {
+      service.httpTest();
+    },
+    async onTestSocketClick() {
+      service.connect(); // const socket = service.connect();
     },
   },
 };
@@ -19,16 +21,11 @@ export default {
 <template>
   <div class="d-flex flex-column align-items-center">
     <button @click="onCreateGame">Host new game</button>
-    <button @click="onTestClick">Connection testing</button>
+    <button @click="onTestHttpClick">Http test</button>
+    <button @click="onTestSocketClick">Socket test</button>
   </div>
 </template>
 
 <style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-}
+
 </style>
