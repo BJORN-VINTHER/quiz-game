@@ -1,7 +1,7 @@
 
 .small-text {
-  font-size: 10pt;
-  color: #ddd
+  font-size: 14pt;
+  color: rgb(168, 191, 226)
 }
 
 .medium-text {
@@ -13,8 +13,8 @@
 }
 
 button {
-  font-size: 25pt;
-  padding: 10px 20px;
+  font-size: 20pt;
+  padding: 5px 20px;
   border-radius: 5px;
   color: #222222;
   transition: all 0.1s;

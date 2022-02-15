@@ -1,5 +1,13 @@
 <template>
-  <div class="d-flex align-items-center justify-content-center" :class="[color]">{{text}}</div>
+  <button
+    class="d-flex align-items-center justify-content-center"
+    :class="[color]"
+    :style="{ 'font-size': textSize }"
+    :disabled="disabled"
+    @click.once="$emit('click')"
+  >
+    {{ text }}
+  </button>
 </template>
 
 <script>
@@ -10,26 +18,21 @@ export default {
     disabled: Boolean,
   },
   computed: {
-      textSize() {
-          if (this.text.length < 20) {
-              return 25;
-          } 
-          else if (this.text.length < 30) {
-              return 20
-          } 
-          else {
-              return 15;
-          }
+    textSize() {
+      if (this.text.length < 20) {
+        return 25;
+      } else if (this.text.length < 40) {
+        return 20;
+      } else {
+        return 15;
       }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
-div {
-  /* display: flex;
-  align-content: center;
-  align-items: center; */
+button {
   margin: 15px;
   padding: 10px 20px;
   text-align: center;
@@ -37,6 +40,8 @@ div {
   border-radius: 5px;
   min-height: 180px;
   cursor: pointer;
+  border: none;
+  color: white;
 }
 .red {
   background: #dc3545;
@@ -73,5 +78,9 @@ div {
 }
 .green:active {
   background: #165a25;
+}
+.disabled {
+  cursor: "cursor";
+  background: gray;
 }
 </style>
