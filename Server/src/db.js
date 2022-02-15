@@ -1,6 +1,7 @@
 const Game = require('./game');
 const Environment = require('./environment');
 const Player = require('./player');
+const Question = require('./question');
 const Connection = require('tedious').Connection;
 var Request = require('tedious').Request;
 var TYPES = require('tedious').TYPES;
@@ -80,6 +81,33 @@ class Db {
             request.on("requestCompleted", function (rowCount, more) {
                 connection.close();
                 resolve(game);
+            });
+        });
+    }
+
+    async getQuestions() {
+        return new Promise((resolve, reject) => {
+            const request = new Request("SELECT OrderIndex, Question, Option1, Option2, Option3, Option4 FROM Question ORDER BY OrderIndex", function(err) {  
+                if (err) {  
+                    console.log(err);
+                    reject(err);
+                }
+            });
+            const questions = [];
+            request.on('row', function(columns) {
+                const question = new Question();
+                question.Order = columns[0].value;
+                question.Text = columns[1].value;
+                question.Option1 = columns[2].value;
+                question.Option2 = columns[3].value;
+                question.Option3 = columns[4].value;
+                question.Option4 = columns[5].value;
+                questions.push(question);
+            });
+            const connection = this.establishConnection(request);
+            request.on("requestCompleted", function (rowCount, more) {
+                connection.close();
+                resolve(questions);
             });
         });
     }

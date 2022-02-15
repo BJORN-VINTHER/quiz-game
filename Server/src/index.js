@@ -44,10 +44,8 @@ io.on("connection", async (socket) => {
         console.log('Server: Received socketAPITest. Sending TestMessageReceived');
         socket.emit('testMessageReceived', testMessage);
     });
-    const { inviteCode, userName, asHost } = socket.handshake.query;
+    const { inviteCode, userName } = socket.handshake.query;
     const game = activeGames.find(g => g.inviteCode === inviteCode);
-    if (asHost && game.hostIP !== socket.remoteAddress)
-        throw new Error('Tried connecting as host, but the IP did not match. Got: ' + socket.remoteAddress);
     if (!!game) {
         let player = await db.getPlayerByIP(socket.remoteAddress, game.GameID);
         if (!player) {
@@ -57,6 +55,7 @@ io.on("connection", async (socket) => {
         }
         else
             player.socket = socket;
+        const asHost = game.hostIP === socket.remoteAddress;
         game.addPlayer(player, asHost);
     }
     else

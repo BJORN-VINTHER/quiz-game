@@ -7,7 +7,7 @@ class GameState {
     currentTurnPlayerID; // number
     currentTurnPlayerName; // String
     answers = []; // List of playerAnswer
-    playerScores; // List of playerScore
+    playerScores = []; // List of playerScore
 
     getUiGameState() {
         return {
@@ -22,8 +22,13 @@ class GameState {
             questionText: this.questionText,
             currentTurnPlayerID: this.currentTurnPlayerID,
             currentTurnPlayerName: this.currentTurnPlayerName,
-            choices: this.choices
         };
+    }
+
+    getRoundAnswerChoices() {
+        return {
+            choices: this.choices
+        }
     }
 
     getTurnResult() {
@@ -46,7 +51,12 @@ class PlayerAnswer {
 class PlayerScore {
     playerID;
     playerName;
-    score;
+    score = 0;
+
+    constructor(id, name) {
+        this.playerID = id;
+        this.playerName = name;
+    }
 }
 
 module.exports = {
