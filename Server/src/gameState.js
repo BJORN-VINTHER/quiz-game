@@ -1,6 +1,6 @@
 class GameState {
-    stateEnum; // 1: Waiting to start. 2: Awaiting answers. 3: Awaiting new round. 4: Game finished.
-    currentRound; // number
+    stateEnum = 1; // 1: Waiting to start. 2: Awaiting answers. 3: Awaiting new round. 4: Game finished.
+    currentRound = 1; // number
     maxRounds; // number
     questionText; // String
     choices; // List of strings
@@ -13,7 +13,7 @@ class GameState {
         return {
             currentRound: this.currentRound,
             maxRound: this.maxRounds,
-            playerScores: this.playerScores.map(p => ({player: p.playerName, score: p.score}))
+            playerScores: this.playerScores
         };
     }
 
