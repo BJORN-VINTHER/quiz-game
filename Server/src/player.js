@@ -12,12 +12,12 @@ class Player {
         this.socket = socket;
         this.userName = userName;
 
-        socket.on("submitAnswer", answer => {
-            this.answerSubmitted.next(answer);
+        socket.on("submitAnswer", answerIndex => {
+            this.answerSubmitted.next(answerIndex);
         });
 
-        socket.on("startNextRound", () => {
-            this.startNextRoundRequested.next();
+        socket.on("startNextRound", delayMilliseconds => {
+            this.startNextRoundRequested.next(delayMilliseconds);
         });
 
         socket.on("showFinalResuts", () => {
