@@ -18,7 +18,6 @@ defineProps({
     <MaerskIcon />
     <div id="title" class="ml-4">
       {{ title }}
-      <span id="ip-text">({{ ip }})</span>
     </div>
   </div>
 </template>

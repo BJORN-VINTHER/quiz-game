@@ -4,17 +4,24 @@ import { serviceMock } from "../utilities/serviceMock.js";
 export default {
   data() {
     return {
-      lobbyState: null,
+      players: [],
     };
   },
   methods: {
     async startGame() {
       this.lobbyState = await serviceMock.startGame();
-      this.$router.push({ path: `/games/${this.$route.params.gameId}/overview` });
+      this.$router.push({
+        path: `/games/${this.$route.params.gameId}/overview`,
+      });
     },
   },
   async mounted() {
-    this.lobbyState = await serviceMock.getLobby(this.$route.params.gameId);
+    const io = serviceMock.connect();
+    io.onPlayerJoined(player => {
+      console.log("add player" + player.playerName)
+      this.players.push(player);
+    });
+    io.simulateLobby();
   },
 };
 </script>
@@ -23,23 +30,19 @@ export default {
   <div class="d-flex flex-column align-items-center">
     <h1>Lobby</h1>
 
-    <template v-if="lobbyState">
-      <h4 style="margin-top: 50px">
-        {{ lobbyState.players.length }} players joined
-      </h4>
-      <div
-        class="d-flex flex-row flex-wrap justify-content-center player-container"
+    <h4 style="margin-top: 50px">{{ players.length }} players joined</h4>
+    <div
+      class="d-flex flex-row flex-wrap justify-content-center player-container"
+    >
+      <span
+        class="d-flex flex-1 player-name"
+        v-for="player in players"
+        :key="player.ip"
+        >{{ player.playerName }}</span
       >
-        <span
-          class="d-flex flex-1 player-name"
-          v-for="player in lobbyState.players"
-          :key="player.ip"
-          >{{ player.playerName }}</span
-        >
-      </div>
+    </div>
 
-      <button class="mt-5" @click="startGame">Start game</button>
-    </template>
+    <button class="mt-5" @click="startGame">Start game</button>
   </div>
 </template>
 

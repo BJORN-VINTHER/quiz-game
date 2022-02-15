@@ -39,9 +39,21 @@ class Service {
         socket.on("connect_error", (err) => {
             console.log(`failed to connect due to ${err.message} \n ${err.stack}`);
         });
-        return socket;
+        return new ServiceSocket(socket);
     }
     //#endregion
+}
+
+class ServiceSocket {
+
+    constructor(socket) {
+        this.onPlayerJoinedCallback = null;
+        this.socket = socket;
+    }
+
+    onPlayerJoined(callback) {
+        this.socket.on("", callback);
+    }
 }
 
 export const service = new Service();
