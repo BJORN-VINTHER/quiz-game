@@ -30,31 +30,48 @@ div {
   /* display: flex;
   align-content: center;
   align-items: center; */
-  margin: 10px;
+  margin: 15px;
+  padding: 10px 20px;
+  text-align: center;
   float: center;
+  border-radius: 5px;
+  min-height: 180px;
+  cursor: pointer;
 }
 .red {
-  background: red;
+  background: #dc3545;
 }
 .red:hover {
-  background: rgb(138, 0, 0);
+  background: #c82333;
+}
+.red:active {
+  background: #881823;
 }
 .orange {
-  background: orange;
+  background: #ffb007;
 }
 .orange:hover {
-  background: rgb(165, 107, 0);
+  background: #e09200;
+}
+.orange:active {
+  background: #9b6500;
 }
 .blue {
-  background: blue;
+  background: #007bff;
 }
 .blue:hover {
-  background: rgb(0, 0, 172);
+  background: #0069d9;
+}
+.blue:active {
+  background: #004997;
 }
 .green {
-  background: green;
+  background: #28a745;
 }
 .green:hover {
-  background: rgb(0, 78, 0);
+  background: #218838;
+}
+.green:active {
+  background: #165a25;
 }
 </style>

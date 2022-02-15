@@ -1,31 +1,43 @@
 <script>
 import { serviceMock } from "../utilities/serviceMock.js";
+import { sleep } from "../utilities/utilities.js";
+import Timer from "../components/Timer.vue";
 import OptionButtonGrid from "./../components/OptionButtonGrid.vue";
 
 export default {
   components: {
     OptionButtonGrid,
+    Timer,
   },
   data() {
     return {
-      gameState: null,
+      io: null,
+      questionIndex: 0,
+      totalQuestions: 3,
       question: null,
+      answers: null,
       showQuestion: false,
       showOptions: false,
     };
   },
+  async mounted() {
+    this.io = serviceMock.connect();
+    this.io.onQuestionStart(async (question) => {
+      this.showOptions = false;
+      this.question = question;
+      this.showQuestion = true;
+      await sleep(2000);
+      this.showOptions = true;
+      this.questionIndex++;
+    });
+    this.io.onQuestionComplete(async ({ question, answers }) => {
+      this.answers = answers;
+    });
+  },
   methods: {
     async simulateQuestion() {
-      this.question = await serviceMock.nextQuestion(this.$route.params.gameId);
-      this.showQuestion = true;
-      await serviceMock.sleep(500);
-
-      this.showOptions = true;
-      await serviceMock.sleep(500);
+      this.io.simulateQuestion(this.questionIndex);
     },
-  },
-  async mounted() {
-    this.gameState = await serviceMock.getGameState(this.$route.params.gameId);
   },
 };
 </script>
@@ -33,12 +45,14 @@ export default {
 <template>
   <div class="d-flex flex-column align-items-center">
     <template v-if="showQuestion">
-      <div>Confession {{ 0 }} / {{ gameState.totalQuestions }}</div>
+      <div>Confession {{ 0 }} / {{ totalQuestions }}</div>
+      <Timer durationMillis="20000" />
+
       <div class="question-text">{{ question.text }}</div>
 
-      <OptionButtonGrid v-if="showOptions" />
+      <OptionButtonGrid v-if="showOptions" :options="this.question.options" />
     </template>
-    <button @click="simulateQuestion">Continue</button>
+    <button @click="simulateQuestion">Next</button>
   </div>
 </template>
 

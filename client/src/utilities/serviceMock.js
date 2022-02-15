@@ -1,13 +1,11 @@
 import { getIp, sleep, random } from "./utilities";
-import {players} from "./mockData";
+import { answers, players, questions } from "./mockData";
 
 class ServiceMock {
 
     constructor() {
         this.init();
     }
-
-    
 
     async init() {
         this.ip = await getIp();
@@ -26,49 +24,6 @@ class ServiceMock {
     }
     //#endregion
 
-    //#region simulations
-
-    //#endregion
-
-
-    async getLobby(gameId) {
-        await sleep(500);
-        return {
-            gameId: gameId,
-            host: this.ip,
-            players: [
-                {
-                    ip: "100.000.000",
-                    playerName: "Mr Robot",
-                },
-                {
-                    ip: "200.000.000",
-                    playerName: "Sasha",
-                },
-                {
-                    ip: "300.000.000",
-                    playerName: "McDonald-Man",
-                },
-                {
-                    ip: "400.000.000",
-                    playerName: "Shubhanka",
-                },
-                {
-                    ip: "500.000.000",
-                    playerName: "Germania",
-                },
-                {
-                    ip: "600.000.000",
-                    playerName: "Sweet Gamer!",
-                },
-                {
-                    ip: "600.000.000",
-                    playerName: "Obi wan Kenobi 5648",
-                },
-            ]
-        }
-    }
-
 
 
     async getGameState(gameId) {
@@ -77,7 +32,7 @@ class ServiceMock {
             gameId: gameId,
             host: this.ip,
             totalQuestions: 20,
-            
+
         }
     }
 
@@ -101,6 +56,25 @@ class ServiceSocket {
 
     constructor() {
         this.onPlayerJoinedCallback = null;
+        this.onStartGameCallback = null;
+        this.onQuestionStartCallback = null;
+        this.onQuestionCompleteCallback = null;
+    }
+
+    nextQuestion(i) {
+        this.onNextQuestionCallback(questions[i]);
+    }
+
+    onQuestionStart(callback) {
+        this.onQuestionStartCallback = callback;
+    }
+
+    onQuestionComplete(callback) {
+        this.onQuestionCompleteCallback = callback;
+    }
+
+    onStartGame(callback) {
+        this.onStartGameCallback = callback;
     }
 
     onPlayerJoined(callback) {
@@ -108,10 +82,21 @@ class ServiceSocket {
     }
 
     async simulateLobby() {
-        for(const player of players) {
+        for (const player of players) {
             await sleep(random(100, 3000));
             this.onPlayerJoinedCallback(player);
         }
+    }
+
+    async simulateQuestion(i) {
+        this.onQuestionStartCallback(questions[i]);
+
+        await sleep(10000);
+
+        this.onQuestionCompleteCallback({
+            question: questions[i],
+            answers: answers[i]
+        });
     }
 }
 

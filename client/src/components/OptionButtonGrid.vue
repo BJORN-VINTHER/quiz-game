@@ -1,12 +1,12 @@
 <template>
-  <div class="container">
+  <div class="container" style="max-width: 900px">
     <div class="row">
-      <OptionButton class="col-sm" color="red" text="nej tak"></OptionButton>
-      <OptionButton class="col-sm" color="orange" text="meget længere tekst som skal være mindre"></OptionButton>
+      <OptionButton class="col-sm" color="red" :text="options[0]"></OptionButton>
+      <OptionButton class="col-sm" color="orange" :text="options[1]"></OptionButton>
     </div>
     <div class="row">
-      <OptionButton class="col-sm" color="blue" text="Bare en pizza"></OptionButton>
-      <OptionButton class="col-sm" color="green" text="meget længere tekst som skal være mindre. Måske endda meget mindre."></OptionButton>
+      <OptionButton class="col-sm" color="blue" :text="options[2]"></OptionButton>
+      <OptionButton class="col-sm" color="green" :text="options[3]"></OptionButton>
     </div>
   </div>
 </template>
@@ -15,6 +15,7 @@
 import OptionButton from "./OptionButton.vue";
 
 export default {
+  props: ["options"],
   components: {
     OptionButton,
   },

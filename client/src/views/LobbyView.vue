@@ -4,24 +4,25 @@ import { serviceMock } from "../utilities/serviceMock.js";
 export default {
   data() {
     return {
+      io: null,
       players: [],
     };
   },
   methods: {
     async startGame() {
-      this.lobbyState = await serviceMock.startGame();
+      this.io.startGame();
       this.$router.push({
         path: `/games/${this.$route.params.gameId}/overview`,
       });
     },
   },
   async mounted() {
-    const io = serviceMock.connect();
-    io.onPlayerJoined(player => {
-      console.log("add player" + player.playerName)
+    this.io = serviceMock.connect();
+    this.io.onPlayerJoined((player) => {
+      console.log("add player" + player.playerName);
       this.players.push(player);
     });
-    io.simulateLobby();
+    this.io.simulateLobby();
   },
 };
 </script>
@@ -32,7 +33,7 @@ export default {
 
     <h4 style="margin-top: 50px">{{ players.length }} players joined</h4>
     <div
-      class="d-flex flex-row flex-wrap justify-content-center player-container"
+      class="d-flex flex-row flex-wrap justify-content-center align-items-start player-container"
     >
       <span
         class="d-flex flex-1 player-name"
@@ -48,10 +49,16 @@ export default {
 
 <style>
 .player-name {
+  border: coral solid 4px;
+  padding: 5px 20px;
+  border-radius: 10px;
+  background: white;
   margin: 10px 40px;
 }
 .player-container {
-  max-width: 1000px;
+  max-width: 90%;
+  width: 100%;
+  min-height: 300px;
   margin: 20px;
   padding: 30px;
   background: #b3e3f3;
