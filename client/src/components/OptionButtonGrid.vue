@@ -5,15 +5,17 @@
         class="col-sm"
         color="red"
         :disabled="disabled"
-        :faded="highlight != null && highlight !== 0"
+        :faded="fade && fade.includes(0)"
         :text="options[0]"
+        @click="onClick(0)"
       ></OptionButton>
       <OptionButton
         class="col-sm"
         color="orange"
         :disabled="disabled"
-        :faded="highlight != null && highlight !== 1"
+        :faded="fade && fade.includes(1)"
         :text="options[1]"
+        @click="onClick(1)"
       ></OptionButton>
     </div>
     <div class="row">
@@ -21,15 +23,17 @@
         class="col-sm"
         color="blue"
         :disabled="disabled"
-        :faded="highlight != null && highlight !== 2"
+        :faded="fade && fade.includes(2)"
         :text="options[2]"
+        @click="onClick(2)"
       ></OptionButton>
       <OptionButton
         class="col-sm"
         color="green"
         :disabled="disabled"
-        :faded="highlight != null && highlight !== 3"
+        :faded="fade && fade.includes(3)"
         :text="options[3]"
+        @click="onClick(3)"
       ></OptionButton>
     </div>
   </div>
@@ -39,13 +43,13 @@
 import OptionButton from "./OptionButton.vue";
 
 export default {
-  props: ["options", "highlight", "disabled"],
+  props: ["options", "fade", "disabled"],
   components: {
     OptionButton,
   },
   methods: {
-    onClick() {
-      console.log("hejsa");
+    onClick(i) {
+      this.$emit("clickTest", i);
     },
   },
 };

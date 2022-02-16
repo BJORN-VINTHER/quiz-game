@@ -22,7 +22,7 @@ export default {
       correctAnswer: null,
       answers: null,
       showTimer: false,
-      highlight: null,
+      fade: [],
       showOptions: false,
     };
   },
@@ -40,7 +40,7 @@ export default {
     this.io.onQuestionStart(async (question) => {
       this.question = question;
       this.correctAnswer = null;
-      this.highlight = null;
+      this.fade = [];
       this.answers = null;
       this.showTimer = false;
       this.showOptions = false;
@@ -55,8 +55,8 @@ export default {
       this.showTimer = false;
       const master = answers.find((x) => x.ip === this.question.player.ip);
       this.highlight = master.answer;
-      this.correctAnswer =
-        master.answer != null ? this.question.options[master.answer] : null;
+      this.correctAnswer = master.answer != null ? this.question.options[master.answer] : null;
+      this.fade = [0,1,2,3].filter(x => x !== master.answer);
     });
 
     this.simulateQuestion(0);

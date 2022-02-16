@@ -2,8 +2,8 @@ const bvHomePc = "213.32.243.108";
 
 export const players = [
     {
-        ip: "100.000.000",
-        playerName: "Mr Robot",
+        ip: "200.000.000",
+        playerName: "Santa Klaus",
         points: 0
     },
     {
@@ -33,7 +33,7 @@ export const players = [
     },
     {
         ip: "700.000.000",
-        playerName: "Obi wan Kenobi 5648",
+        playerName: "Obi wan Kenobi 123",
         points: 0
     },
     {
@@ -42,8 +42,8 @@ export const players = [
         points: 0
     },
     {
-        ip: "#Proud_Mama",
-        playerName: "Obi wan Kenobi 5648",
+        ip: bvHomePc,
+        playerName: "Obi wan Kenobi",
         points: 0
     },
 ]
@@ -52,7 +52,10 @@ export const questions = [
     {
         index: 0,
         text: "My goal of todays session is _",
-        player: players[4],
+        player: {
+            ip: "0",
+            playerName: "Bjørn Vinther",
+        },
         options: [
             "for us to learn something about each other and have a good time.",
             "to serve as a basis for your performance evaluation.",
