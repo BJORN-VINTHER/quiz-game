@@ -179,7 +179,7 @@ app.get('/testGameFlow', async (req, res) => {
         playerCount++;
         if (playerCount === 4) {
             console.log('Host starting round');
-            hostSocket.emit('startNextRound', 3000);
+            setTimeout(() => hostSocket.emit('startNextRound', 3000), 2000);
         }
     })
     hostSocket.on('roundQuestionReady', question => {
@@ -188,14 +188,14 @@ app.get('/testGameFlow', async (req, res) => {
     hostSocket.on('roundAnswerChoicesReady ', choices => {
         console.log('Host: Round answer choices ready ', choices);
     });
-    let counter;
+    let counter = 0;
     let gameEnded = false;
     hostSocket.on('turnResultReady', result => {
         console.log('Host: received turn results ', result);
         counter++;
         if (counter === 16) {
             hostSocket.emit('showFinalResuts');
-        } else if (!gameEnded && counter < 5) {
+        } else if (!gameEnded) {
             hostSocket.emit('startNextRound', 3000);
         }
     });

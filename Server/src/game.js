@@ -93,11 +93,12 @@ class Game {
     endTurn() {
         console.log('Server: ending turn');
         const { io } = require('./index.js');
-        const correctAnswerIndex = this.gameState.answers.find(a => a.playerID === this.gameState.currentTurnPlayerID);
+        const correctAnswerIndex = this.currentQuestionOrderIndex === 1 ? 0 : this.gameState.answers.find(a => a.playerID === this.gameState.currentTurnPlayerID).answerIndex;
+        console.log('Correct answer index ', correctAnswerIndex, this.gameState.answers);
         for (const answer of this.gameState.answers.filter(p => p.playerID !== this.gameState.currentTurnPlayerID))
             if (answer.answerIndex === correctAnswerIndex)
-                this.gameState.playerScores.find(p => p.playerID === answer.playerID).score += 100;
-        setTimeout(() => io.to(this.gameGuid).emit('gameStateUpdated', this.gameState.getUiGameState()), 3000); // Emit updated score and round state
+                this.gameState.playerScores.find(p => p.playerIP === answer.playerIP).score += 100;
+        // setTimeout(() => io.to(this.gameGuid).emit('gameStateUpdated', this.gameState.getUiGameState()), 3000); // Emit updated score and round state
         io.to(this.gameGuid).emit('turnResultReady', this.gameState.getTurnResult(correctAnswerIndex)); // Emit round result
 
         this.currentRoundPreviouslyPlayedPlayerIDs.push(this.gameState.currentTurnPlayerID);
