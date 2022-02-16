@@ -17,7 +17,7 @@ class GameState {
             inviteCode: inviteCode,
             currentQuestion: this.currentRound,
             totalQuestions: this.questionsCount,
-            playerScores: this.playerScores,
+            playerScores: this.playerScores.map(s => ({playerIP: s.playerIP, userName: s.playerName, score: s.score})),
             host: hostIP,
         };
     }
@@ -45,7 +45,7 @@ class GameState {
             currentTurnPlayerName: this.currentTurnPlayerName,
             answers: this.answers.map(a => ({playerIP: a.playerIP, playerName: a.playerName, answer: a.answerText})),
             correctAnswerIndex: correctAnswerIndex,
-            // scores
+            scores: this.playerScores.map(s => ({playerIP: s.playerIP, userName: s.playerName, score: s.score}))
         };
     }
 }
