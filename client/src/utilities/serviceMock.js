@@ -1,6 +1,5 @@
 import { getIp, sleep, random } from "./utilities";
 import { gameStates, players, questions } from "./mockData";
-import { io } from "socket.io-client";
 
 class ServiceMock {
 
@@ -20,11 +19,14 @@ class ServiceMock {
     //#endregion
 
     //#region socket
-    async connect() {
+    async connect(gameId) {
         await sleep(200);
+
+        const state = { ...gameStates[0] };
+        state.gameId = gameId;
         return {
-            io: new ServiceSocket(),
-            gameState: gameStates[0]
+            io: new ServiceSocket(this.ip),
+            gameState: state
         }
     }
     //#endregion
@@ -32,7 +34,8 @@ class ServiceMock {
 
 class ServiceSocket {
 
-    constructor() {
+    constructor(ip) {
+        this.ip;
         this.onPlayerJoinedCallback = null;
         this.onStartGameCallback = null;
         this.onQuestionStartCallback = null;
@@ -57,6 +60,12 @@ class ServiceSocket {
 
     onPlayerJoined(callback) {
         this.onPlayerJoinedCallback = callback;
+    }
+
+    joinGame(playerName) {
+        if (this.onPlayerJoinedCallback) {
+            this.onPlayerJoinedCallback({ ip: this.ip, playerName });
+        }
     }
 
     async simulateLobby() {

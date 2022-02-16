@@ -16,7 +16,7 @@ export default {
     },
   },
   async mounted() {
-    const {io, gameState} = await serviceMock.connect();
+    const {io, gameState} = await serviceMock.connect(this.$route.params.gameId);
     this.io = io;
     this.io.onPlayerJoined((player) => {
       console.log("add player" + player.playerName);

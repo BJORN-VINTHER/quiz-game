@@ -13,7 +13,9 @@ export default {
   },
   data() {
     return {
-      questionTime: 5000,
+      debug: true,
+      questionDelay: 4000,
+      questionTime: 20000,
       io: null,
       totalQuestions: 0,
       question: null,
@@ -21,20 +23,31 @@ export default {
       answers: null,
       showTimer: false,
       highlight: null,
+      showOptions: false,
     };
   },
 
   async mounted() {
-    const { io, gameState } = await serviceMock.connect();
+    if (this.debug) {
+      this.questionDelay = 500;
+      this.questionTime = 3000;
+    }
+
+    const { io, gameState } = await serviceMock.connect(this.$route.params.gameId);
     this.io = io;
     this.totalQuestions = gameState.totalQuestions;
 
     this.io.onQuestionStart(async (question) => {
       this.question = question;
-      this.showTimer = true;
       this.correctAnswer = null;
       this.highlight = null;
       this.answers = null;
+      this.showTimer = false;
+      this.showOptions = false;
+
+      await sleep(this.questionDelay);
+      this.showTimer = true;
+      this.showOptions = true;
     });
 
     this.io.onQuestionComplete(async ({ question, answers }) => {
@@ -42,16 +55,18 @@ export default {
       this.showTimer = false;
       const master = answers.find((x) => x.ip === this.question.player.ip);
       this.highlight = master.answer;
-      this.correctAnswer = master.answer != null
-        ? this.question.options[master.answer]
-        : null;
+      this.correctAnswer =
+        master.answer != null ? this.question.options[master.answer] : null;
     });
 
     this.simulateQuestion(0);
   },
   methods: {
     async simulateQuestion(index) {
-      this.io.simulateQuestion(index, this.questionTime + 1000);
+      this.io.simulateQuestion(
+        index,
+        this.questionTime + this.questionDelay + 1000
+      );
     },
   },
   computed: {
@@ -102,6 +117,7 @@ export default {
       />
 
       <OptionButtonGrid
+        v-if="showOptions"
         style="margin-top: 50px; height: 450px"
         :options="this.question.options"
         :disabled="true"
@@ -109,7 +125,9 @@ export default {
       />
     </template>
 
-    <button class="align-self-end" @click="simulateQuestion(question.index + 1)">Next</button>
+    <button v-if="correctAnswer" @click="simulateQuestion(question.index + 1)">
+      Next
+    </button>
   </div>
 </template>
 

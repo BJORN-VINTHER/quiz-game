@@ -12,7 +12,7 @@ export default {
       service.httpTest();
     },
     async onTestSocketClick() {
-      service.connect(); // const socket = service.connect();
+      service.connect();
     },
   },
 };
