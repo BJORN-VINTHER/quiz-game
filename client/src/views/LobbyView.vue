@@ -10,14 +10,14 @@ export default {
   },
   methods: {
     async startGame() {
-      this.io.startGame();
       this.$router.push({
         path: `/games/${this.$route.params.gameId}/overview`,
       });
     },
   },
   async mounted() {
-    this.io = serviceMock.connect();
+    const {io, gameState} = await serviceMock.connect();
+    this.io = io;
     this.io.onPlayerJoined((player) => {
       console.log("add player" + player.playerName);
       this.players.push(player);

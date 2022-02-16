@@ -1,7 +1,7 @@
 <template>
   <button
     class="d-flex align-items-center justify-content-center"
-    :class="[color]"
+    :class="[color, {faded: faded}]"
     :style="{ 'font-size': textSize }"
     :disabled="disabled"
     @click.once="$emit('click')"
@@ -15,16 +15,17 @@ export default {
   props: {
     text: String,
     color: String,
+    faded: Boolean,
     disabled: Boolean,
   },
   computed: {
     textSize() {
       if (this.text.length < 20) {
-        return 25;
+        return 25 + "pt";
       } else if (this.text.length < 40) {
-        return 20;
+        return 21 + "pt";
       } else {
-        return 15;
+        return 17 + "pt";
       }
     },
   },
@@ -39,7 +40,6 @@ button {
   float: center;
   border-radius: 5px;
   min-height: 180px;
-  cursor: pointer;
   border: none;
   color: white;
 }
@@ -79,8 +79,10 @@ button {
 .green:active {
   background: #165a25;
 }
-.disabled {
-  cursor: "cursor";
-  background: gray;
+.faded {
+  opacity: 0.3;
+}
+button:disabled {
+  pointer-events: none;
 }
 </style>

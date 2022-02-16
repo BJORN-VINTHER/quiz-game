@@ -1,24 +1,39 @@
 <template>
-  <div class="container my-4 p-4">
-    <img width="30" height="30"  class="mb-1" src="../assets/icons/quote.png" />
-
-    <div class="question-text mb-3">
-      {{ questionTextParts[0] }}
-      <span class="answer" v-if="answer">{{ answer }}</span>
-      <u v-else
-        >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u
-      >
-      {{ questionTextParts[1] }}
+  <div class="container mt-4 mb-2 p-4 d-flex flex-column align-items-center">
+    <!-- <div class="d-flex flex-column align-items-start" style="margin: 0px auto">  -->
+    <!-- quote -->
+    <div class="d-flex flex-row align-self-center">
+      <img
+        width="30"
+        height="30"
+        class="mb-1 align-self-start"
+        src="../assets/icons/quote1.png"
+      />
+      <div class="question-text mx-3 my-2">
+        {{ questionTextParts[0] }}
+        <span :class="color" v-if="answer">{{ answer }}</span>
+        <u v-else
+          >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u
+        >
+        {{ questionTextParts[1] }}
+      </div>
+      <img
+        width="30"
+        height="30"
+        class="mb-1 align-self-end"
+        src="../assets/icons/quote2.png"
+      />
     </div>
-    <div class="align-self-center small-text">
-      - {{ question.player.playerName }}
     </div>
-  </div>
+  <!-- </div> -->
+  <div class="small-text">
+      - {{ question.index === 0 ? 'Bjørn Vinther' : question.player.playerName }}
+    </div>
 </template>
 
 <script>
 export default {
-  props: ["question", "answer"],
+  props: ["question", "answer", "color"],
   computed: {
     questionTextParts() {
       return this.question.text.split("_");
@@ -29,8 +44,8 @@ export default {
 
 <style scoped>
 .container {
-  border-top: 2px;
-  border-bottom: 2px;
+  border-top: 1px;
+  border-bottom: 1px;
   border-left: 0px;
   border-right: 0px;
   border-color: white;
@@ -39,7 +54,16 @@ export default {
 .question-text {
   font-size: 25pt;
 }
-.answer {
-  color: rgb(255, 186, 57);
+.red {
+  color: #dc3545;
+}
+.orange {
+  color: #ffb007;
+}
+.blue {
+  color: #007bff;
+}
+.green {
+  color: #28a745;
 }
 </style>

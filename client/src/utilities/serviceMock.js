@@ -1,5 +1,6 @@
 import { getIp, sleep, random } from "./utilities";
-import { answers, players, questions } from "./mockData";
+import { gameStates, players, questions } from "./mockData";
+import { io } from "socket.io-client";
 
 class ServiceMock {
 
@@ -19,37 +20,14 @@ class ServiceMock {
     //#endregion
 
     //#region socket
-    connect() {
-        return new ServiceSocket();
-    }
-    //#endregion
-
-
-
-    async getGameState(gameId) {
-        await sleep(500);
+    async connect() {
+        await sleep(200);
         return {
-            gameId: gameId,
-            host: this.ip,
-            totalQuestions: 20,
-
+            io: new ServiceSocket(),
+            gameState: gameStates[0]
         }
     }
-
-    async nextQuestion(gameId) {
-        await this.sleep(500);
-        return {
-            number: 0,
-            text: "The goal of today's session is ______",
-            assignedTo: "100.000.000",
-            options: [
-                "for us to have fun and learn something about each other.",
-                "to make you debug my code.",
-                "to use it as a basis for your performance review.",
-                "to learn English."
-            ]
-        };
-    }
+    //#endregion
 }
 
 class ServiceSocket {
@@ -88,14 +66,22 @@ class ServiceSocket {
         }
     }
 
-    async simulateQuestion(i) {
+    async simulateQuestion(i, timeout) {
         this.onQuestionStartCallback(questions[i]);
 
-        await sleep(10000);
+        await sleep(timeout);
 
+        const answers = players.map(x => {
+            return {
+                ip: x.ip,
+                playerName: x.playerName,
+                answer: i === 0 ? 0 : random(0, 3)
+            }
+        })
+        answers[5].answer = null;
         this.onQuestionCompleteCallback({
             question: questions[i],
-            answers: answers[i]
+            answers: answers
         });
     }
 }

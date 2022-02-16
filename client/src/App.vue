@@ -43,7 +43,7 @@ export default {
 #app-container {
   margin: 20px auto;
   max-width: 1200px;
-  border: purple solid 10px;
+  /* border: purple solid 10px; */
   font-weight: normal;
 }
 
