@@ -80,6 +80,7 @@ class ServiceSocket {
 
         await sleep(timeout);
 
+        const question = {...questions[i]};
         const answers = players.map(x => {
             return {
                 ip: x.ip,
@@ -87,9 +88,15 @@ class ServiceSocket {
                 answer: i === 0 ? 0 : random(0, 3)
             }
         })
-        answers[5].answer = null;
+
+        if (question.index === 0) {
+            question.correctAnswer = 0;
+        }else {
+            question.correctAnswer = answers.find(x => x.ip === question.player.ip).answer;
+        }
+
         this.onQuestionCompleteCallback({
-            question: questions[i],
+            question: question,
             answers: answers
         });
     }

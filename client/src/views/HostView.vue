@@ -53,10 +53,8 @@ export default {
     this.io.onQuestionComplete(async ({ question, answers }) => {
       this.answers = answers;
       this.showTimer = false;
-      const master = answers.find((x) => x.ip === this.question.player.ip);
-      this.highlight = master.answer;
-      this.correctAnswer = master.answer != null ? this.question.options[master.answer] : null;
-      this.fade = [0,1,2,3].filter(x => x !== master.answer);
+      this.correctAnswer = question.options[question.correctAnswer];
+      this.fade = [0,1,2,3].filter(x => x !==  question.correctAnswer);
     });
 
     this.simulateQuestion(0);
@@ -121,7 +119,7 @@ export default {
         style="margin-top: 50px; height: 450px"
         :options="this.question.options"
         :disabled="true"
-        :highlight="highlight"
+        :fade="fade"
       />
     </template>
 
