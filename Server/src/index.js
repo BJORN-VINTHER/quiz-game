@@ -91,7 +91,8 @@ app.post('/hostNewGame', async (req, res) => {
 
 app.post('/getGameState', (req, res) => {
     const { inviteCode } = req.body;
-    const game = this.games.find(g => g.inviteCode === inviteCode);
+    const game = activeGames.find(g => g.inviteCode === inviteCode);
+    console.log('Found game ', game, inviteCode);
     return game.getGameStateSnapshot();
 });
 
@@ -173,14 +174,12 @@ app.get('/testGameFlow', async (req, res) => {
         console.log('Host received this game state update ', state);
     });
     let playerCount = 1;
-    let roundStarted = false;
     hostSocket.on('playerJoined', (player) => {
         console.log('Host: Player joined! ', player);
         playerCount++;
         if (playerCount === 4) {
             console.log('Host starting round');
             hostSocket.emit('startNextRound', 3000);
-            roundStarted = true;
         }
     })
     hostSocket.on('roundQuestionReady', question => {
@@ -196,7 +195,7 @@ app.get('/testGameFlow', async (req, res) => {
         counter++;
         if (counter === 16) {
             hostSocket.emit('showFinalResuts');
-        } else if (!gameEnded && !roundStarted) {
+        } else if (!gameEnded && counter < 5) {
             hostSocket.emit('startNextRound', 3000);
         }
     });
@@ -223,10 +222,11 @@ app.get('/testGameFlow', async (req, res) => {
         });
         socket.on('roundQuestionReady', question => {
             console.log(userNames[i] + ' received question ' + question);
-        });
-        socket.on('roundAnswerChoicesReady', () => {
             const answerIndex = Math.floor(Math.random() * 4);
             socket.emit('submitAnswer', answerIndex);
+        });
+        socket.on('roundAnswerChoicesReady', () => {
+            
             console.log(userNames[i] + ' answered ' + answerIndex);
         });
     }
