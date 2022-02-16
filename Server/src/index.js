@@ -99,6 +99,7 @@ app.post('/joinGame', async (req, res) => {
     const { inviteCode, userName, ip } = req.body;
     const game = activeGames.find(g => g.inviteCode === inviteCode);
     if (!!game) {
+        console.log('Adding player with username ', userName);
         await db.addPlayer(game.gameID, userName, ip ?? socket.remoteAddress);
         game.notifyPlayerJoined(userName, ip);
         /*console.log('Added player to db with id ', playerID);
@@ -171,13 +172,15 @@ app.get('/testGameFlow', async (req, res) => {
     hostSocket.on('gameStateUpdated', (state) => {
         console.log('Host received this game state update ', state);
     });
-    let playerCount = 0;
+    let playerCount = 1;
+    let roundStarted = false;
     hostSocket.on('playerJoined', (player) => {
         console.log('Host: Player joined! ', player);
         playerCount++;
         if (playerCount === 4) {
             console.log('Host starting round');
             hostSocket.emit('startNextRound', 3000);
+            roundStarted = true;
         }
     })
     hostSocket.on('roundQuestionReady', question => {
@@ -193,7 +196,7 @@ app.get('/testGameFlow', async (req, res) => {
         counter++;
         if (counter === 16) {
             hostSocket.emit('showFinalResuts');
-        } else if (!gameEnded) {
+        } else if (!gameEnded && !roundStarted) {
             hostSocket.emit('startNextRound', 3000);
         }
     });
@@ -208,7 +211,7 @@ app.get('/testGameFlow', async (req, res) => {
         await axios.post('http://localhost:'+port+'/joinGame', {
             inviteCode: inviteCode,
             userName: userNames[i],
-            ip: '123.456.78.89'
+            ip: ips[i]
         });
         const ioClient = require('socket.io-client');
         const socket = ioClient.connect('http://localhost:'+4000+'?inviteCode='+inviteCode+'&ip='+ips[i]); // +'&userName='+userNames[i]

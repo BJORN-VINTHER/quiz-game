@@ -153,8 +153,8 @@ class Db {
             });
             const player = new Player(socket, null, ip);
             request.on('row', function(columns) {
-                player.playerID = columns[0];
-                player.userName = columns[1];
+                player.playerID = columns[0].value;
+                player.userName = columns[1].value;
             });
             const connection = this.establishConnection(request);
             request.on("requestCompleted", function (rowCount, more) {
