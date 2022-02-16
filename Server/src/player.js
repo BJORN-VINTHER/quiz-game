@@ -2,15 +2,17 @@ const { Subject } = require('rxjs');
 
 class Player {
     playerID;
+    playerIP;
     socket;
     userName;
     answerSubmitted = new Subject();
     startNextRoundRequested = new Subject();
     showFinalResultsRequested = new Subject();
 
-    constructor(socket, userName) {
+    constructor(socket, userName, ip) {
         this.socket = socket;
         this.userName = userName;
+        this.playerIP = ip;
 
         socket.on("submitAnswer", answerIndex => {
             this.answerSubmitted.next(answerIndex);
@@ -20,9 +22,9 @@ class Player {
             this.startNextRoundRequested.next(delayMilliseconds);
         });
 
-        socket.on("showFinalResuts", () => {
+        socket.on("showFinalResult", () => {
             this.showFinalResultsRequested.next();
-        })
+        });
     }
 }
 

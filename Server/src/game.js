@@ -16,6 +16,7 @@ class Game {
     questions;
     currentRoundPreviouslyPlayedPlayerIDs = [];
     currentQuestionOrderIndex = 0;
+    _endRoundAfterTimer = false;
 
     // Host subscriptions
     startNextRoundSubscription;
@@ -33,7 +34,7 @@ class Game {
         if (!asHost && !this.players.some(p => p.playerID === player.playerID)) {
             console.log('Adding player ', player.userName);
             this.players.push(player);
-            this.gameState.playerScores.push(new PlayerScore(player.playerID, player.userName));
+            this.gameState.playerScores.push(new PlayerScore(player.playerIP, player.userName));
         }
         
         player.socket.join(this.gameGuid); // Join the game socketIO room to enable broadcasting
@@ -48,14 +49,25 @@ class Game {
                 this.showFinalResultsSubscription.unsubscribe();
             this.showFinalResultsRequested = player.showFinalResultsRequested.subscribe(() => this.showFinalResultsRequested());
         }
-        this.broadcastGameStateUpdated();
+        // this.broadcastGameStateUpdated(player);
     }
 
-    broadcastGameStateUpdated() {
+    notifyPlayerJoined(userName, playerIP) {
+        const { io } = require('./index.js');
+        io.to(this.gameGuid).emit('playerJoined', {playerName: userName, playerIP: playerIP});
+    }
+
+    broadcastGameStateUpdated(player) {
         console.log('Broadcasting gamestate to room ', this.gameGuid);
         const { io } = require('./index.js');
-        io.to(this.gameGuid).emit('gameStateUpdated', this.gameState.getUiGameState());
+        // io.to(this.gameGuid).emit('gameStateUpdated', this.gameState.getUiGameState());
+        io.to(this.gameGuid).emit('playerJoined', {playerName: player.userName, playerIP: player.playerIP});
     }
+
+    getGameStateSnapshot() {
+        this.gameState.getUiGameState(this.inviteCode, this.hostIP);
+    }
+
 
     onAnswerSubmitted(answerIndex, player) {
         if (this.gameState.stateEnum !== 2)
@@ -65,14 +77,17 @@ class Game {
 
         const playerAnswer = new PlayerAnswer();
         playerAnswer.playerID = player.playerID;
+        playerAnswer.playerIP = player.playerIP;
         playerAnswer.playerName = player.userName;
         playerAnswer.answerIndex = answerIndex;
         console.log('Server: Answer choices and index ', answerIndex, this.gameState.choices);
         playerAnswer.answerText = this.gameState.choices[answerIndex];
         console.log('Server: pushing player answer ', playerAnswer);
         this.gameState.answers.push(playerAnswer);
-        if (this.gameState.answers.length === this.players.length)
+        if (this.gameState.answers.length === this.players.length) {
+            this._endRoundAfterTimer = false;
             this.endTurn();
+        }
     }
 
     endTurn() {
@@ -98,23 +113,31 @@ class Game {
         }
     }
 
-    onStartNextRoundRequested(delayMilliseconds) {
+    onStartNextRoundRequested(roundTimeMilliseconds) {
         if (this.gameState.stateEnum !== 1 && this.gameState.stateEnum !== 3)
             throw new Error('Invalid game state to request new round ' + this.gameState.stateEnum);
         console.log('Server: Starting next round');
         // io.to(this.gameID).emit('startingNewRound', {timerSeconds: 5});
         this.startTurn();
-        setTimeout(() => this.sendAnswerOptions(), delayMilliseconds ?? 3000);
+        // setTimeout(() => this.sendAnswerOptions(), 3000);
+        this._endRoundAfterTimer = true;
+        setTimeout(() => {
+            if (this._endRoundAfterTimer)
+                this.endTurn();
+        }, roundTimeMilliseconds);
     }
 
     startTurn() {
         const { io } = require('./index.js');
         this.gameState.maxRounds = Math.floor(this.questions.length / this.players.length);
+        this.gameState.questionsCount = this.questions.length;
         console.log('Current round and max ', this.gameState.currentRound, this.gameState.maxRounds);
         shuffleArray(this.players);
         const chosenPlayer = this.players.find(p => !this.currentRoundPreviouslyPlayedPlayerIDs.includes(p.playerID));
-        this.gameState.currentTurnPlayerID = chosenPlayer.playerID;
-        this.gameState.currentTurnPlayerName = chosenPlayer.userName;
+        this.gameState.currentTurnPlayerID = this.currentQuestionOrderIndex === 0 ? this.host.playerID : chosenPlayer.playerID;
+        this.gameState.currentTurnPlayerIP = this.currentQuestionOrderIndex === 0 ? this.hostIP : chosenPlayer.playerIP;
+        this.gameState.currentTurnPlayerName = this.currentQuestionOrderIndex === 0 ? 'Bjørn Vinther' : chosenPlayer.userName;
+        this.gameState.currentQuestionIndex = this.currentQuestionOrderIndex + 1;
         this.gameState.stateEnum = 2;
         const question = this.questions[this.currentQuestionOrderIndex];
         console.log('Reading question ', question, this.currentQuestionOrderIndex);

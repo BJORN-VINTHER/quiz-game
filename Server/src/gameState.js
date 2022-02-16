@@ -2,26 +2,33 @@ class GameState {
     stateEnum = 1; // 1: Waiting to start. 2: Awaiting answers. 3: Awaiting new round. 4: Game finished.
     currentRound = 1; // number
     maxRounds; // number
+    currentQuestionIndex; // number
+    questionsCount; // number
     questionText; // String
     choices; // List of strings
     currentTurnPlayerID; // number
+    currentTurnPlayerIP; // string
     currentTurnPlayerName; // String
     answers = []; // List of playerAnswer
     playerScores = []; // List of playerScore
 
-    getUiGameState() {
+    getUiGameState(inviteCode, hostIP) {
         return {
-            currentRound: this.currentRound,
-            maxRound: this.maxRounds,
-            playerScores: this.playerScores
+            inviteCode: inviteCode,
+            currentQuestion: this.currentRound,
+            totalQuestions: this.questionsCount,
+            playerScores: this.playerScores,
+            host: hostIP,
         };
     }
 
     getRoundQuestion() {
         return {
+            index: this.currentQuestionIndex,
             questionText: this.questionText,
-            currentTurnPlayerID: this.currentTurnPlayerID,
+            playerIP: this.currentTurnPlayerIP,
             currentTurnPlayerName: this.currentTurnPlayerName,
+            choices: this.choices
         };
     }
 
@@ -31,30 +38,33 @@ class GameState {
         }
     }
 
-    getTurnResult() {
+    getTurnResult(correctAnswerIndex) {
         return {
             questionText: this.questionText,
-            currentTurnPlayerID: this.currentTurnPlayerID,
+            currentTurnPlayerIP: this.currentTurnPlayerIP,
             currentTurnPlayerName: this.currentTurnPlayerName,
-            answers: this.answers.map(a => ({player: a.playerName, answer: a.answerText})),
+            answers: this.answers.map(a => ({playerIP: a.playerIP, playerName: a.playerName, answer: a.answerText})),
+            correctAnswerIndex: correctAnswerIndex,
+            // scores
         };
     }
 }
 
 class PlayerAnswer {
     playerID;
+    playerIP;
     playerName;
     answerIndex;
     answerText;
 }
 
 class PlayerScore {
-    playerID;
+    playerIP;
     playerName;
     score = 0;
 
-    constructor(id, name) {
-        this.playerID = id;
+    constructor(ip, name) {
+        this.playerIP = ip;
         this.playerName = name;
     }
 }

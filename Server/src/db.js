@@ -151,7 +151,7 @@ class Db {
                     reject(err);
                 }
             });
-            const player = new Player(socket, null);
+            const player = new Player(socket, null, ip);
             request.on('row', function(columns) {
                 player.playerID = columns[0];
                 player.userName = columns[1];
