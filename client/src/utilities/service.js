@@ -1,4 +1,4 @@
-import { getIp, httpGet, httpPost } from "./utilities";
+import { getIp, httpPost } from "./utilities";
 import io from "socket.io-client";
 
 class Service {
@@ -9,50 +9,95 @@ class Service {
 
     async init() {
         console.log('Initializing service');
-        //this.baseUrl = "https://quiz-game.azurewebsites.net";
-        this.baseUrl = "http://localhost:4000"
+        // this.baseUrl = "https://quiz-game.azurewebsites.net";
+        this.baseUrl = "http://localhost:4000";
         this.ip = await getIp();
+        console.log('IP is: ' + this.ip);
+        this.io = null;
     }
 
     //#region http endpoints
     async httpTest() {
-        console.log('calling service');
-        const result = await httpGet(this.baseUrl + "/test");
-        console.log("service reponded with: " + result);
-        return result;
+        const gameId = await httpPost(this.baseUrl + "/hostNewGame", { ip: this.ip });
+        console.log("Created game: " + gameId);
+        return gameId;
     }
 
     async createGame() {
-        const gameId = await httpPost(this.baseUrl + "/hostNewGame");
+        const gameId = await httpPost(this.baseUrl + "/hostNewGame", { ip: this.ip });
         console.log("Created game: " + gameId);
         return gameId;
+    }
+
+    async joinGame(gameId, userName) {
+        const body = {
+            inviteCode: gameId,
+            username: userName,
+            ip: this.ip
+        }
+        await httpPost(this.baseUrl + "/joinGame", body);
+        console.log("Joined game: " + gameId);
+        return gameId;
+    }
+
+    async getGameState(gameId) {
+        const state = await httpPost(this.baseUrl + "/getGameState", { inviteCode: gameId });
+        console.log("Game state", state);
+        return state;
     }
     //#endregion
 
     //#region socket
-    connect() {
-        console.log('Connecting to socket...');
-        const socket = io.connect(this.baseUrl);
-        socket.on('connect', () => {
-            console.log('Connection established');
-        })
-        socket.on("connect_error", (err) => {
-            console.log(`failed to connect due to ${err.message} \n ${err.stack}`);
+    async connect(gameId) {
+        return new Promise((resolve, reject) => {
+            if (!this.io) {
+                console.log('Connecting to socket...');
+                const socket = io.connect(this.baseUrl + `?inviteCode=${gameId}&ip=${this.ip}`);
+                socket.on('connect', () => {
+                    console.log('Connection established');
+                    resolve();
+                })
+                socket.on("connect_error", (err) => {
+                    console.log(`BURN! ${err.message} \n ${err.stack}`);
+                    reject();
+                });
+                this.io = new ServiceSocket(socket);
+            }
+            resolve();
         });
-        return new ServiceSocket(socket);
     }
     //#endregion
 }
 
 class ServiceSocket {
 
-    constructor(socket) {
-        this.onPlayerJoinedCallback = null;
-        this.socket = socket;
+    constructor(io, ip) {
+        this.ip = ip;
+        this.io = io;
+    }
+
+    nextQuestion(duration) {
+        this.io.emit("startNextRound", duration)
+    }
+
+    submitAnswer(index) {
+        this.io.emit("submitAnswer", index)
+    }
+
+    // showFinalResult() {
+    //     this.io.emit("showFinalResult")
+    // }
+
+    onQuestionStart(callback) {
+        this.io.on("roundQuestionReady", callback);
+    }
+
+    onQuestionComplete(callback) {
+        this.io.on("turnResultReady", callback);
     }
 
     onPlayerJoined(callback) {
-        this.socket.on("", callback);
+        this.io.on("playerJoined", callback);
     }
 }
 

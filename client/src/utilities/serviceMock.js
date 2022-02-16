@@ -37,7 +37,6 @@ class ServiceSocket {
     constructor(ip) {
         this.ip;
         this.onPlayerJoinedCallback = null;
-        this.onStartGameCallback = null;
         this.onQuestionStartCallback = null;
         this.onQuestionCompleteCallback = null;
     }
@@ -52,10 +51,6 @@ class ServiceSocket {
 
     onQuestionComplete(callback) {
         this.onQuestionCompleteCallback = callback;
-    }
-
-    onStartGame(callback) {
-        this.onStartGameCallback = callback;
     }
 
     onPlayerJoined(callback) {

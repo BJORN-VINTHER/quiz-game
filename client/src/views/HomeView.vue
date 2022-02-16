@@ -1,6 +1,7 @@
 <script>
 import { serviceMock } from "../utilities/serviceMock.js";
 import { service } from "../utilities/service.js";
+import { httpGet } from "../utilities/utilities.js";
 
 export default {
   methods: {
@@ -9,10 +10,16 @@ export default {
       this.$router.push({ path: `/games/${gameId}/lobby` });
     },
     async onTestHttpClick() {
-      service.httpTest();
+      await httpGet(service.baseUrl + "/test");
     },
     async onTestSocketClick() {
-      service.connect();
+      await service.connect("123");
+
+      service.io.io.on("testMessageReceived", (message) => {
+        console.log("received message from socket: ", message);
+      });
+
+      service.io.io.emit("socketAPITest", "My farm is big!");
     },
   },
 };
@@ -26,6 +33,4 @@ export default {
   </div>
 </template>
 
-<style>
-
-</style>
+<style></style>
