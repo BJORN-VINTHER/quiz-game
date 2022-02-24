@@ -65,7 +65,7 @@ class Game {
     }
 
     getGameStateSnapshot() {
-        this.gameState.getUiGameState(this.inviteCode, this.hostIP);
+        return this.gameState.getUiGameState(this.inviteCode, this.hostIP);
     }
 
 
