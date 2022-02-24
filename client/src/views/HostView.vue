@@ -3,6 +3,7 @@ import { serviceMock } from "../utilities/serviceMock.js";
 import { sleep } from "../utilities/utilities.js";
 import Timer from "../components/Timer.vue";
 import Quote from "../components/Quote.vue";
+import Scores from "../components/Scores.vue";
 import OptionButtonGrid from "../components/OptionButtonGrid.vue";
 
 export default {
@@ -10,6 +11,7 @@ export default {
     OptionButtonGrid,
     Timer,
     Quote,
+    Scores
   },
   data() {
     return {
@@ -53,6 +55,7 @@ export default {
     this.io.onQuestionComplete(async ({ question, answers }) => {
       this.answers = answers;
       this.showTimer = false;
+      this.question = question;
       this.correctAnswer = question.options[question.correctAnswer];
       this.fade = [0,1,2,3].filter(x => x !==  question.correctAnswer);
     });
@@ -113,6 +116,8 @@ export default {
         :answer="correctAnswer"
         :color="answerColor"
       />
+
+      <Scores v-if="true || fade.length > 0" :correctAnswer="question.correctAnswer" />
 
       <OptionButtonGrid
         v-if="showOptions"

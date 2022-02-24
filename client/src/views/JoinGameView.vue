@@ -12,9 +12,8 @@
 </template>
 
 <script>
-import { serviceMock } from "../utilities/serviceMock";
 import OptionButtonGrid from "../components/OptionButtonGrid.vue";
-import { getIp } from "../utilities/utilities";
+import { service } from "../utilities/service";
 
 export default {
   components: {
@@ -22,23 +21,18 @@ export default {
   },
   data() {
     return {
-      io: null,
       playerName: "",
     };
   },
   async mounted() {
-    const ip = await getIp();
-    const { io, gameState } = await serviceMock.connect(
-      this.$route.params.gameId
-    );
-    this.io = io;
-    if (gameState.players.some((x) => x.ip === ip)) {
+    const gameState = await service.getGameState(this.$route.params.gameId);
+    if (gameState.players.some((x) => x.ip === service.ip)) {
       this.$router.push({ path: `/games/${this.$route.params.gameId}` });
     }
   },
   methods: {
-    joinGame() {
-      this.io.joinGame(this.playerName.trim());
+    async joinGame() {
+      await service.joinGame(this.$route.params.gameId, this.playerName.trim());
       this.$router.push({ path: `/games/${this.$route.params.gameId}` });
     },
   },

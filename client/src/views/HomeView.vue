@@ -6,8 +6,8 @@ import { httpGet } from "../utilities/utilities.js";
 export default {
   methods: {
     async onCreateGame() {
-      const gameId = await serviceMock.createGame();
-      this.$router.push({ path: `/games/${gameId}/lobby` });
+      const inviteCode = await service.createGame();
+      this.$router.push({ path: `/games/${inviteCode}/lobby` });
     },
     async onTestHttpClick() {
       await httpGet(service.baseUrl + "/test");

@@ -1,9 +1,35 @@
 <template>
-  <div class="d-flex flex-row">
-      <ScoreBar color="red" :height="120" :isCorrect="true" :votes="8" />
-      <ScoreBar color="red" :height="40" :isCorrect="true" :votes="2" />
-      <ScoreBar color="red" :height="30" :isCorrect="true" :votes="1" />
-      <ScoreBar color="red" :height="40" :isCorrect="true" :votes="2" />
+  <div class="d-flex flex-row align-items-end">
+    <ScoreBar color="red" :height="120" :isCorrect="true" :votes="8" />
+    <ScoreBar color="orange" :height="40" :isCorrect="true" :votes="2" />
+    <ScoreBar color="blue" :height="30" :isCorrect="false" :votes="1" />
+    <ScoreBar color="green" :height="40" :isCorrect="true" :votes="2" />
+  </div>
+  <div class="d-flex flex-row justify-content-between">
+    <img
+      v-show="correctAnswer == 0"
+      width="30"
+      height="30"
+      src="../assets/icons/star2.png"
+    />
+    <img
+      v-show="correctAnswer == 1"
+      width="30"
+      height="30"
+      src="../assets/icons/star2.png"
+    />
+    <img
+      v-show="correctAnswer == 2"
+      width="30"
+      height="30"
+      src="../assets/icons/star2.png"
+    />
+    <img
+      v-show="correctAnswer == 3"
+      width="30"
+      height="30"
+      src="../assets/icons/star2.png"
+    />
   </div>
 </template>
 
@@ -11,40 +37,11 @@
 import ScoreBar from "./ScoreBar2.vue";
 
 export default {
-  props: ["question", "answer", "color"],
+  props: ["answers", "correctAnswer"],
   components: {
     ScoreBar,
-  },
-  computed: {
-    questionTextParts() {
-      return this.question.text.split("_");
-    },
   },
 };
 </script>
 
-<style scoped>
-.container {
-  border-top: 1px;
-  border-bottom: 1px;
-  border-left: 0px;
-  border-right: 0px;
-  border-color: white;
-  border-style: solid;
-}
-.question-text {
-  font-size: 25pt;
-}
-.red {
-  color: #dc3545;
-}
-.orange {
-  color: #ffb007;
-}
-.blue {
-  color: #007bff;
-}
-.green {
-  color: #28a745;
-}
-</style>
+<style scoped></style>

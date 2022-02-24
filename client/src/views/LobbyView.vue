@@ -1,10 +1,9 @@
 <script>
-import { serviceMock } from "../utilities/serviceMock.js";
+import { service } from '../utilities/service.js';
 
 export default {
   data() {
     return {
-      io: null,
       players: [],
     };
   },
@@ -16,13 +15,12 @@ export default {
     },
   },
   async mounted() {
-    const {io, gameState} = await serviceMock.connect(this.$route.params.gameId);
-    this.io = io;
-    this.io.onPlayerJoined((player) => {
-      console.log("add player" + player.playerName);
+    await service.connect(this.$route.params.gameId);
+    service.io.onPlayerJoined((player) => {
+      console.log("onPlayerJoined", player);
       this.players.push(player);
     });
-    this.io.simulateLobby();
+    // this.io.simulateLobby();
   },
 };
 </script>
@@ -30,6 +28,8 @@ export default {
 <template>
   <div class="d-flex flex-column align-items-center">
     <h1>Lobby</h1>
+
+    <a class="small-text">{{`https://green-sand-0c2c0b503.1.azurestaticapps.net/game/${this.$route.params.gameId}/join`}}</a>
 
     <h4 style="margin-top: 50px">{{ players.length }} players joined</h4>
     <div

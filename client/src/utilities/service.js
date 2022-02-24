@@ -24,16 +24,16 @@ class Service {
     }
 
     async createGame() {
-        const gameId = await httpPost(this.baseUrl + "/hostNewGame", { ip: this.ip });
-        console.log("Created game: " + gameId);
-        return gameId;
+        const { inviteCode } = await httpPost(this.baseUrl + "/hostNewGame", { ip: this.ip });
+        console.log("Created game: " + inviteCode);
+        return inviteCode;
     }
 
     async joinGame(gameId, userName) {
         const body = {
             inviteCode: gameId,
-            username: userName,
-            ip: this.ip
+            userName: userName,
+            ip: "123.456" //this.ip
         }
         await httpPost(this.baseUrl + "/joinGame", body);
         console.log("Joined game: " + gameId);

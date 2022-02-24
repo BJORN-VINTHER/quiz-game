@@ -1,7 +1,19 @@
 <template>
   <div class="d-flex flex-column align-items-center">
-    <span :class="[color]">{{votes}}</span>
-    <div :class="[color]" :style="{width: '80px', height: height + 'px'}"></div>
+    <span :class="[color]">{{ votes }}</span>
+    <div
+      :class="[color]"
+      class="mx-2"
+      :style="{ width: '80px', height: height + 'px' }"
+      style="border-radius: 2px"
+    >
+      <!-- <img
+        v-if="isCorrect"
+        width="30"
+        height="30"
+        src="../assets/icons/star2.png"
+      /> -->
+    </div>
   </div>
 </template>
 
