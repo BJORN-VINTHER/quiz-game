@@ -45,7 +45,8 @@ class GameState {
             currentTurnPlayerName: this.currentTurnPlayerName,
             answers: this.answers.map(a => ({playerIP: a.playerIP, playerName: a.playerName, answer: a.answerText})),
             correctAnswerIndex: correctAnswerIndex,
-            scores: this.playerScores.map(s => ({playerIP: s.playerIP, userName: s.playerName, score: s.score}))
+            scores: this.playerScores.map(s => ({playerIP: s.playerIP, userName: s.playerName, score: s.score})),
+            choices: this.choices
         };
     }
 }
