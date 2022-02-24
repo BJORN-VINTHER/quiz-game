@@ -93,7 +93,7 @@ app.post('/getGameState', (req, res) => {
     const { inviteCode } = req.body;
     const game = activeGames.find(g => g.inviteCode === inviteCode);
     console.log('Found game ', game, inviteCode);
-    return game.getGameStateSnapshot();
+    res.status(200).send(game.getGameStateSnapshot());
 });
 
 app.post('/joinGame', async (req, res) => {
