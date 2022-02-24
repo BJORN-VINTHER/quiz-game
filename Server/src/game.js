@@ -27,7 +27,10 @@ class Game {
         this.inviteCode = inviteCode;
         const Db = require('./db');
         const db = Db.createNew();
-        db.getQuestions().then(q => this.questions = q);
+        db.getQuestions().then(q => {
+            this.questions = q;
+            this.gameState.questionsCount = this.questions.length;
+        });
     }
 
     addPlayer(player, asHost) {
@@ -131,7 +134,6 @@ class Game {
     startTurn() {
         const { io } = require('./index.js');
         this.gameState.maxRounds = Math.floor(this.questions.length / this.players.length);
-        this.gameState.questionsCount = this.questions.length;
         console.log('Current round and max ', this.gameState.currentRound, this.gameState.maxRounds);
         shuffleArray(this.players);
         const chosenPlayer = this.players.find(p => !this.currentRoundPreviouslyPlayedPlayerIDs.includes(p.playerID));
