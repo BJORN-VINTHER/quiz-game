@@ -29,11 +29,11 @@ class Service {
         return inviteCode;
     }
 
-    async joinGame(gameId, userName) {
+    async joinGame(gameId, userName, ip) {
         const body = {
             inviteCode: gameId,
             userName: userName,
-            ip: "123.456" //this.ip
+            ip: ip
         }
         await httpPost(this.baseUrl + "/joinGame", body);
         console.log("Joined game: " + gameId);

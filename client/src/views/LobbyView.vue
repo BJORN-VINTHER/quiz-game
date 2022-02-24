@@ -1,5 +1,7 @@
 <script>
-import { service } from '../utilities/service.js';
+import { service } from "../utilities/service.js";
+import io from "socket.io-client";
+import { sleep } from '../utilities/utilities.js';
 
 export default {
   data() {
@@ -13,14 +15,24 @@ export default {
         path: `/games/${this.$route.params.gameId}/overview`,
       });
     },
+    async fakeConnectPlayer(name, ip) {
+      await service.joinGame(this.$route.params.gameId, name, ip);
+      io.connect('http://localhost:'+4000+'?inviteCode='+this.$route.params.gameId+'&ip='+ip);
+      await sleep(200);
+    }
   },
   async mounted() {
     await service.connect(this.$route.params.gameId);
+
     service.io.onPlayerJoined((player) => {
       console.log("onPlayerJoined", player);
       this.players.push(player);
     });
-    // this.io.simulateLobby();
+
+    
+    await this.fakeConnectPlayer("Mr doodle", "888.786");
+    await this.fakeConnectPlayer("PACO", "123.786");
+    await this.fakeConnectPlayer("Max", "897.786");
   },
 };
 </script>
@@ -29,7 +41,9 @@ export default {
   <div class="d-flex flex-column align-items-center">
     <h1>Lobby</h1>
 
-    <a class="small-text">{{`https://green-sand-0c2c0b503.1.azurestaticapps.net/game/${this.$route.params.gameId}/join`}}</a>
+    <a class="small-text">{{
+      `https://green-sand-0c2c0b503.1.azurestaticapps.net/game/${this.$route.params.gameId}/join`
+    }}</a>
 
     <h4 style="margin-top: 50px">{{ players.length }} players joined</h4>
     <div

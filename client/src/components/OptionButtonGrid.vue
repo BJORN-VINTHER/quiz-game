@@ -6,7 +6,7 @@
         color="red"
         :disabled="disabled"
         :faded="fade && fade.includes(0)"
-        :text="options[0]"
+        :text="choices[0]"
         @click="onClick(0)"
       ></OptionButton>
       <OptionButton
@@ -14,7 +14,7 @@
         color="orange"
         :disabled="disabled"
         :faded="fade && fade.includes(1)"
-        :text="options[1]"
+        :text="choices[1]"
         @click="onClick(1)"
       ></OptionButton>
     </div>
@@ -24,7 +24,7 @@
         color="blue"
         :disabled="disabled"
         :faded="fade && fade.includes(2)"
-        :text="options[2]"
+        :text="choices[2]"
         @click="onClick(2)"
       ></OptionButton>
       <OptionButton
@@ -32,7 +32,7 @@
         color="green"
         :disabled="disabled"
         :faded="fade && fade.includes(3)"
-        :text="options[3]"
+        :text="choices[3]"
         @click="onClick(3)"
       ></OptionButton>
     </div>
@@ -43,7 +43,7 @@
 import OptionButton from "./OptionButton.vue";
 
 export default {
-  props: ["options", "fade", "disabled"],
+  props: ["choices", "fade", "disabled"],
   components: {
     OptionButton,
   },

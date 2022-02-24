@@ -5,27 +5,27 @@ import Timer from "../components/Timer.vue";
 import Quote from "../components/Quote.vue";
 import Scores from "../components/Scores.vue";
 import OptionButtonGrid from "../components/OptionButtonGrid.vue";
+import { service } from "../utilities/service.js";
 
 export default {
   components: {
     OptionButtonGrid,
     Timer,
     Quote,
-    Scores
+    Scores,
   },
   data() {
     return {
       debug: true,
       questionDelay: 4000,
       questionTime: 20000,
-      io: null,
       totalQuestions: 0,
       question: null,
       correctAnswer: null,
       answers: null,
       showTimer: false,
       fade: [],
-      showOptions: false,
+      showchoices: false,
     };
   },
 
@@ -35,56 +35,55 @@ export default {
       this.questionTime = 3000;
     }
 
-    const { io, gameState } = await serviceMock.connect(this.$route.params.gameId);
-    this.io = io;
+    const gameState = await service.getGameState(this.$route.params.gameId);
+    await service.connect(this.$route.params.gameId);
     this.totalQuestions = gameState.totalQuestions;
 
-    this.io.onQuestionStart(async (question) => {
+    service.io.onQuestionStart(async (question) => {
+      console.log("Started question: ", question);
       this.question = question;
       this.correctAnswer = null;
       this.fade = [];
       this.answers = null;
       this.showTimer = false;
-      this.showOptions = false;
+      this.showchoices = false;
 
       await sleep(this.questionDelay);
       this.showTimer = true;
-      this.showOptions = true;
+      this.showchoices = true;
     });
 
-    this.io.onQuestionComplete(async ({ question, answers }) => {
-      this.answers = answers;
+    service.io.onQuestionComplete(async (question) => {
+      console.log("Completed question: ", question);
+      this.answers = question.answers;
       this.showTimer = false;
       this.question = question;
-      this.correctAnswer = question.options[question.correctAnswer];
-      this.fade = [0,1,2,3].filter(x => x !==  question.correctAnswer);
+      this.correctAnswer = question.choices[question.correctAnswerIndex];
+      this.fade = [0, 1, 2, 3].filter((x) => x !== question.correctAnswerIndex);
     });
 
-    this.simulateQuestion(0);
+    this.startNextQuestion();
   },
   methods: {
-    async simulateQuestion(index) {
-      this.io.simulateQuestion(
-        index,
-        this.questionTime + this.questionDelay + 1000
-      );
-    },
+    async startNextQuestion() {
+      service.io.nextQuestion(this.questionTime);
+    }
   },
   computed: {
     answerColor() {
       if (!this.question) {
         return null;
       }
-      if (this.correctAnswer == this.question.options[0]) {
+      if (this.correctAnswer == this.question.choices[0]) {
         return "red";
       }
-      if (this.correctAnswer == this.question.options[1]) {
+      if (this.correctAnswer == this.question.choices[1]) {
         return "orange";
       }
-      if (this.correctAnswer == this.question.options[2]) {
+      if (this.correctAnswer == this.question.choices[2]) {
         return "blue";
       }
-      if (this.correctAnswer == this.question.options[3]) {
+      if (this.correctAnswer == this.question.choices[3]) {
         return "green";
       }
       return null;
@@ -108,7 +107,7 @@ export default {
         v-if="showTimer"
         ref="timerComponent"
         class="mt-3"
-        :durationMillis="questionTime"
+        :durationMillis="questionTime - questionDelay"
       />
       <div v-else style="height: 32px; width: 10px"></div>
       <Quote
@@ -117,18 +116,21 @@ export default {
         :color="answerColor"
       />
 
-      <Scores v-if="true || fade.length > 0" :correctAnswer="question.correctAnswer" />
+      <Scores
+        v-if="true || fade.length > 0"
+        :correctAnswer="question.correctAnswerIndex"
+      />
 
       <OptionButtonGrid
-        v-if="showOptions"
+        v-if="showchoices"
         style="margin-top: 50px; height: 450px"
-        :options="this.question.options"
+        :choices="this.question.choices"
         :disabled="true"
         :fade="fade"
       />
     </template>
 
-    <button v-if="correctAnswer" @click="simulateQuestion(question.index + 1)">
+    <button v-if="correctAnswer" @click="startNextQuestion()">
       Next
     </button>
   </div>

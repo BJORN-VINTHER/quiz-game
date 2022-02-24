@@ -27,7 +27,7 @@
     </div>
   <!-- </div> -->
   <div class="small-text">
-      - {{ question.index === 0 ? 'Bjørn Vinther' : question.player.playerName }}
+      - {{ question.currentTurnPlayerName }}
     </div>
 </template>
 
@@ -36,7 +36,7 @@ export default {
   props: ["question", "answer", "color"],
   computed: {
     questionTextParts() {
-      return this.question.text.split("_");
+      return this.question.questionText.split("_");
     },
   },
 };
