@@ -3,10 +3,9 @@ import { io, Socket } from "socket.io-client";
 import { CreateGameResult, GameState, Player, PlayerScore, Question, QuestionResult } from "./serviceDataObjects";
 
 class Service {
-    // baseUrl = "https://quiz-game.azurewebsites.net";
-    baseUrl = "http://localhost:4000";
-    ip: string = null;
-    io: ServiceSocket = null;
+    public baseUrl: string = "http://localhost:4000";
+    public ip: string = null;
+    public io: ServiceSocket = null;
 
     constructor() {
         this.init();
@@ -28,6 +27,12 @@ class Service {
     async createGame() {
         const result = await httpPost(this.baseUrl + "/hostNewGame", { ip: this.ip }) as CreateGameResult;
         console.log("Created game: " + result.inviteCode);
+        return result.inviteCode;
+    }
+
+    async createTestGame() {
+        const result = await httpPost(this.baseUrl + "/testGameHost", { ip: this.ip }) as CreateGameResult;
+        console.log("Created test game: " + result.inviteCode);
         return result.inviteCode;
     }
 

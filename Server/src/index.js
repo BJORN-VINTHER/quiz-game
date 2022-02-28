@@ -169,6 +169,8 @@ app.post('/testGameHost', async (req, res) => {
 async function simulateGameHostVersion(inviteCode) {
     const userNames = ['randomUser123', 'funnyGuy1337', 'basementDweller42', 'testUser69'];
     const ips = ['1234', '5678', '9876', '5412'];
+    const axios = require('axios');
+
     for (let i=0; i<4; i++) {
         await new Promise((res, err) => setTimeout(() => res(), 500));
         await axios.post('http://localhost:4000/joinGame', {

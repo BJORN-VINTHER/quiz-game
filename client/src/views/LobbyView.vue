@@ -1,7 +1,5 @@
 <script>
 import { service } from "../service/service";
-import io from "socket.io-client";
-import { sleep } from '../utilities/utilities';
 
 export default {
   data() {
@@ -14,11 +12,6 @@ export default {
       this.$router.push({
         path: `/games/${this.$route.params.gameId}/overview`,
       });
-    },
-    async fakeConnectPlayer(name, ip) {
-      await service.joinGame(this.$route.params.gameId, name, ip);
-      io.connect('http://localhost:'+4000+'?inviteCode='+this.$route.params.gameId+'&ip='+ip);
-      await sleep(200);
     }
   },
   async mounted() {
@@ -28,11 +21,6 @@ export default {
       console.log("onPlayerJoined", player);
       this.players.push(player);
     });
-
-    
-    await this.fakeConnectPlayer("Mr doodle", "888.786");
-    await this.fakeConnectPlayer("PACO", "123.786");
-    await this.fakeConnectPlayer("Max", "897.786");
   },
 };
 </script>
