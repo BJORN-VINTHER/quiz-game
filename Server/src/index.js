@@ -154,6 +154,69 @@ app.get('/socketIOTest', (req, res) => {
     });
 });
 
+app.get('/testGameHost', async (req, res) => {
+    const inviteCode = makeID(6);
+    let { ip } = req.body;
+    const newGame = new Game(ip, inviteCode);
+    const gameID = await db.addGame(newGame.gameGuid, inviteCode, ip);
+    newGame.gameID = gameID;
+    console.log('Created game with gameID ', gameID);
+    activeGames.push(newGame);
+    simulateGameHostVersion(inviteCode);
+    res.status(200).send({ inviteCode: inviteCode });
+});
+
+function simulateGameHostVersion(inviteCode) {
+    const userNames = ['randomUser123', 'funnyGuy1337', 'basementDweller42', 'testUser69'];
+    const ips = ['1234', '5678', '9876', '5412'];
+    for (let i=0; i<4; i++) {
+        await new Promise((res, err) => setTimeout(() => res(), 500));
+        await axios.post('http://localhost:4000/joinGame', {
+            inviteCode: inviteCode,
+            userName: userNames[i],
+            ip: ips[i]
+        });
+        const ioClient = require('socket.io-client');
+        const socket = ioClient.connect('http://localhost:4000?inviteCode='+inviteCode+'&ip='+ips[i]); // +'&userName='+userNames[i]
+        socket.on('connect', () => {
+            console.log('Player connected with user name ', userNames[i]);
+        });
+        socket.on('roundQuestionReady', question => {
+            console.log(userNames[i] + ' received question ' + question);
+            await new Promise((res, err) => setTimeout(() => res(), 500));
+            const answerIndex = Math.floor(Math.random() * 4);
+            socket.emit('submitAnswer', answerIndex);
+        });
+    }
+}
+
+app.get('/testGamePlayer', async (req, res) => {
+    const currentTestGameCount = activeGames.filter(g => g.hostIP.startsWith('hostIPTest')).length;
+    const hostIP = 'hostIPTest_'+currentTestGameCount;
+    const inviteCode = 'test'+currentTestGameCount;
+    activeGames.push(new Game(hostIP, inviteCode));
+    simulateGamePlayerVersion(inviteCode);
+    res.status(200).send({ inviteCode: inviteCode });
+});
+
+function simulateGamePlayerVersion(hostIP, inviteCode) {
+    const hostIoClient = require('socket.io-client');
+    const hostSocket = hostIoClient.connect('http://localhost:4000?inviteCode='+inviteCode+'&ip='+hostIP);
+    hostSocket.on('connect', () => {
+        console.log('Host connected');
+    });
+    hostSocket.on('playerJoined', (player) => {
+        console.log('Host: Player joined! ', player);
+        playerCount++;
+        console.log('Host starting round');
+        setTimeout(() => hostSocket.emit('startNextRound', 10000), 2000);
+    });
+    hostSocket.on('turnResultReady', result => {
+        console.log('Host: received turn results ', result);
+        setTimeout(() => hostSocket.emit('startNextRound', 3000), 2000);
+    });
+}
+
 app.get('/testGameFlow', async (req, res) => {
     console.log('Testing game flow');
     const axios = require('axios');
@@ -181,7 +244,7 @@ app.get('/testGameFlow', async (req, res) => {
             console.log('Host starting round');
             setTimeout(() => hostSocket.emit('startNextRound', 3000), 2000);
         }
-    })
+    });
     hostSocket.on('roundQuestionReady', question => {
         console.log('Host: Round question ready ', question);
     });
