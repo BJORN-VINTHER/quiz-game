@@ -166,7 +166,7 @@ app.post('/testGameHost', async (req, res) => {
     res.status(200).send({ inviteCode: inviteCode });
 });
 
-function simulateGameHostVersion(inviteCode) {
+async function simulateGameHostVersion(inviteCode) {
     const userNames = ['randomUser123', 'funnyGuy1337', 'basementDweller42', 'testUser69'];
     const ips = ['1234', '5678', '9876', '5412'];
     for (let i=0; i<4; i++) {
@@ -181,7 +181,7 @@ function simulateGameHostVersion(inviteCode) {
         socket.on('connect', () => {
             console.log('Player connected with user name ', userNames[i]);
         });
-        socket.on('roundQuestionReady', question => {
+        socket.on('roundQuestionReady', async question => {
             console.log(userNames[i] + ' received question ' + question);
             await new Promise((res, err) => setTimeout(() => res(), 500));
             const answerIndex = Math.floor(Math.random() * 4);
@@ -199,7 +199,7 @@ app.get('/testGamePlayer', async (req, res) => {
     res.status(200).send({ inviteCode: inviteCode });
 });
 
-function simulateGamePlayerVersion(hostIP, inviteCode) {
+async function simulateGamePlayerVersion(hostIP, inviteCode) {
     const hostIoClient = require('socket.io-client');
     const hostSocket = hostIoClient.connect('http://localhost:4000?inviteCode='+inviteCode+'&ip='+hostIP);
     hostSocket.on('connect', () => {
