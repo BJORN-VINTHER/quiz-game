@@ -1,4 +1,4 @@
-import { getIp, sleep, random } from "./utilities";
+import { getIp, sleep, random } from "../utilities/utilities";
 import { gameStates, players, questions } from "./mockData";
 
 class ServiceMock {

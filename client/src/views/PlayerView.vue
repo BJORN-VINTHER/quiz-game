@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { serviceMock } from "../utilities/serviceMock";
+import { serviceMock } from "../service/serviceMock";
 import OptionButtonGrid from "../components/OptionButtonGrid.vue";
 import Quote from "../components/Quote.vue";
 import Timer from "../components/Timer.vue";
@@ -77,7 +77,7 @@ export default {
       this.showOptions = true;
     });
 
-    this.io.onQuestionComplete(async ({ question, answers }) => {
+    this.io.onQuestionComplete(async () => {
       this.showTimer = false;
       this.disable;
       if (this.fade.length === 0) {

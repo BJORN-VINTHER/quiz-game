@@ -1,7 +1,7 @@
 <script>
-import { serviceMock } from "../utilities/serviceMock.js";
-import { service } from "../utilities/service.js";
-import { httpGet } from "../utilities/utilities.js";
+import { serviceMock } from "../service/serviceMock.js";
+import { service } from "../service/service";
+import { httpGet } from "../utilities/utilities";
 
 export default {
   methods: {

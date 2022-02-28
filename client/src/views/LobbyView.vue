@@ -1,7 +1,7 @@
 <script>
-import { service } from "../utilities/service.js";
+import { service } from "../service/service";
 import io from "socket.io-client";
-import { sleep } from '../utilities/utilities.js';
+import { sleep } from '../utilities/utilities';
 
 export default {
   data() {

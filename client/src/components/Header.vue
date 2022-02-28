@@ -1,26 +1,28 @@
-<script setup>
-import MaerskIcon from "./../assets/icons/IconMaersk.vue";
-
-defineProps({
-  title: {
-    type: String,
-    required: true,
-  },
-  ip: {
-    type: String,
-    required: true
-  }
-});
-</script>
-
 <template>
-  <div id="header" class="d-flex flex-row justify-content-center align-items-center">
+  <div
+    id="header"
+    class="d-flex flex-row justify-content-center align-items-center"
+  >
     <MaerskIcon />
     <div id="title" class="ml-4">
       {{ title }}
     </div>
   </div>
 </template>
+
+<script lang="ts">
+import MaerskIcon from "../assets/icons/IconMaersk.vue";
+
+export default {
+  props: {
+    title: String,
+    ip: String,
+  },
+  components: {
+    MaerskIcon
+  }
+}
+</script>
 
 <style scoped>
 #header {
@@ -35,7 +37,7 @@ defineProps({
   height: 40px;
 }
 #ip-text {
-  font-family: "Calibri", 'Times New Roman', Times, serif;
+  font-family: "Calibri", "Times New Roman", Times, serif;
   color: #9aacb9;
   font-size: 1rem;
 }

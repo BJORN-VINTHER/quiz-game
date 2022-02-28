@@ -1,11 +1,11 @@
 <script>
-import { serviceMock } from "../utilities/serviceMock.js";
-import { sleep } from "../utilities/utilities.js";
+import { serviceMock } from "../service/serviceMock.js";
+import { sleep } from "../utilities/utilities";
 import Timer from "../components/Timer.vue";
 import Quote from "../components/Quote.vue";
 import Scores from "../components/Scores.vue";
 import OptionButtonGrid from "../components/OptionButtonGrid.vue";
-import { service } from "../utilities/service.js";
+import { service } from "../service/service";
 
 export default {
   components: {

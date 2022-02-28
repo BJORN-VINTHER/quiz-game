@@ -13,12 +13,9 @@
 
 <script>
 import OptionButtonGrid from "../components/OptionButtonGrid.vue";
-import { service } from "../utilities/service";
+import { service } from "../service/service";
 
 export default {
-  components: {
-    OptionButtonGrid,
-  },
   data() {
     return {
       playerName: "",
