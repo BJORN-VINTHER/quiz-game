@@ -1,7 +1,6 @@
 <script>
-import { serviceMock } from "../service/serviceMock.js";
+import { sleep } from '@/utilities/utilities';
 import { service } from "../service/service";
-import { httpGet } from "../utilities/utilities";
 
 export default {
   methods: {
@@ -12,7 +11,12 @@ export default {
     async onCreateTestGame() {
       const inviteCode = await service.createTestGame();
       this.$router.push({ path: `/games/${inviteCode}/lobby` });
-    }
+    },
+    async joinTestGame() {
+      const inviteCode = await service.joinTestGame();
+      await sleep(1000);
+      this.$router.push({ path: `/games/${inviteCode}` });
+    },
   },
 };
 </script>
@@ -21,6 +25,7 @@ export default {
   <div class="d-flex flex-column align-items-center">
     <button @click="onCreateGame">Host new game</button>
     <button @click="onCreateTestGame">Host test game</button>
+    <button @click="joinTestGame">player test game</button>
   </div>
 </template>
 

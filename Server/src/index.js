@@ -200,7 +200,7 @@ app.get('/testGamePlayer', async (req, res) => {
     const gameID = await db.addGame(game.gameGuid, inviteCode, hostIP);
     game.gameID = gameID;
     activeGames.push(game);
-    simulateGamePlayerVersion(inviteCode);
+    simulateGamePlayerVersion(hostIP, inviteCode);
     res.status(200).send({ inviteCode: inviteCode });
 });
 

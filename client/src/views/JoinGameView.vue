@@ -12,7 +12,6 @@
 </template>
 
 <script>
-import OptionButtonGrid from "../components/OptionButtonGrid.vue";
 import { service } from "../service/service";
 
 export default {
@@ -29,7 +28,7 @@ export default {
   },
   methods: {
     async joinGame() {
-      await service.joinGame(this.$route.params.gameId, this.playerName.trim());
+      await service.joinGame(this.$route.params.gameId, this.playerName.trim(), service.ip);
       this.$router.push({ path: `/games/${this.$route.params.gameId}` });
     },
   },

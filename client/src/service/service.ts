@@ -1,4 +1,4 @@
-import { getIp, httpPost } from "../utilities/utilities";
+import { getIp, httpGet, httpPost } from "../utilities/utilities";
 import { io, Socket } from "socket.io-client";
 import { CreateGameResult, GameState, Player, PlayerScore, Question, QuestionResult } from "./serviceDataObjects";
 
@@ -44,6 +44,12 @@ class Service {
         }
         await httpPost(this.baseUrl + "/joinGame", body);
         console.log("Joined game: " + inviteCode);
+        return inviteCode;
+    }
+
+    async joinTestGame() {
+        const {inviteCode} = await httpGet(this.baseUrl + "/testGamePlayer");
+        console.log("Joined test game: " + inviteCode);
         return inviteCode;
     }
     
@@ -99,7 +105,7 @@ class ServiceSocket {
         this.io.on("roundQuestionReady", callback);
     }
 
-    onQuestionComplete(callback: (question: QuestionResult) => void) {
+    onQuestionComplete(callback: (questionResult: QuestionResult) => void) {
         this.io.on("turnResultReady", callback);
     }
 
