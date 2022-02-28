@@ -197,7 +197,7 @@ app.get('/testGamePlayer', async (req, res) => {
     const hostIP = 'hostIPTest_'+currentTestGameCount;
     const inviteCode = 'test'+currentTestGameCount;
     const game = new Game(hostIP, inviteCode);
-    const gameID = await db.addGame(game.gameGuid, inviteCode, ip);
+    const gameID = await db.addGame(game.gameGuid, inviteCode, hostIP);
     game.gameID = gameID;
     activeGames.push(game);
     simulateGamePlayerVersion(inviteCode);
@@ -212,7 +212,6 @@ async function simulateGamePlayerVersion(hostIP, inviteCode) {
     });
     hostSocket.on('playerJoined', (player) => {
         console.log('Host: Player joined! ', player);
-        playerCount++;
         console.log('Host starting round');
         setTimeout(() => hostSocket.emit('startNextRound', 10000), 2000);
     });
