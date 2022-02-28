@@ -154,7 +154,7 @@ app.get('/socketIOTest', (req, res) => {
     });
 });
 
-app.get('/testGameHost', async (req, res) => {
+app.post('/testGameHost', async (req, res) => {
     const inviteCode = makeID(6);
     let { ip } = req.body;
     const newGame = new Game(ip, inviteCode);
