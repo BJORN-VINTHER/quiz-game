@@ -1,5 +1,4 @@
 <script>
-import { serviceMock } from "../service/serviceMock.js";
 import { sleep } from "../utilities/utilities";
 import Timer from "../components/Timer.vue";
 import Quote from "../components/Quote.vue";
@@ -32,7 +31,7 @@ export default {
   async mounted() {
     if (this.debug) {
       this.questionDelay = 500;
-      this.questionTime = 3000;
+      this.questionTime = 6000;
     }
 
     const gameState = await service.getGameState(this.$route.params.gameId);

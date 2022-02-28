@@ -185,7 +185,7 @@ async function simulateGameHostVersion(inviteCode) {
         });
         socket.on('roundQuestionReady', async question => {
             console.log(userNames[i] + ' received question ' + question);
-            await new Promise((res, err) => setTimeout(() => res(), 500));
+            await new Promise((res, err) => setTimeout(() => res(), 3500));
             const answerIndex = Math.floor(Math.random() * 4);
             socket.emit('submitAnswer', answerIndex);
         });

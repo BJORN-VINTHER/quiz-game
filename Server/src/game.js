@@ -125,10 +125,10 @@ class Game {
         this.startTurn();
         // setTimeout(() => this.sendAnswerOptions(), 3000);
         this._endRoundAfterTimer = true;
-        setTimeout(() => {
-            if (this._endRoundAfterTimer)
-                this.endTurn();
-        }, roundTimeMilliseconds);
+        // setTimeout(() => {
+        //     if (this._endRoundAfterTimer)
+        //         this.endTurn();
+        // }, roundTimeMilliseconds);
     }
 
     startTurn() {
