@@ -196,7 +196,10 @@ app.get('/testGamePlayer', async (req, res) => {
     const currentTestGameCount = activeGames.filter(g => g.hostIP.startsWith('hostIPTest')).length;
     const hostIP = 'hostIPTest_'+currentTestGameCount;
     const inviteCode = 'test'+currentTestGameCount;
-    activeGames.push(new Game(hostIP, inviteCode));
+    const game = new Game(hostIP, inviteCode);
+    const gameID = await db.addGame(game.gameGuid, inviteCode, ip);
+    game.gameID = gameID;
+    activeGames.push(game);
     simulateGamePlayerVersion(inviteCode);
     res.status(200).send({ inviteCode: inviteCode });
 });
